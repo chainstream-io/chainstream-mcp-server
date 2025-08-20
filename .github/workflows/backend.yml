@@ -1,0 +1,39 @@
+name: Backend Deployment on Tag
+
+on:
+  push:
+    tags:
+      - "backend-*"
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY: dexes/dex-mcp-server
+  DOCKER_REGISTRY: 440744256864.dkr.ecr.ap-southeast-1.amazonaws.com
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR Login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Docker Image as latest
+        run: |
+          IMAGE=${{ env.DOCKER_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+          docker buildx build --platform linux/x86_64 -t ${{ env.ECR_REPOSITORY }}:latest .
+          docker tag ${{ env.ECR_REPOSITORY }}:latest $IMAGE
+          docker push $IMAGE
