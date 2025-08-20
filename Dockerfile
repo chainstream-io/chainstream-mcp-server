@@ -15,8 +15,8 @@ COPY --from=dependencies /app/node_modules ./node_modules
 ENV NODE_ENV production
 # Build the library
 RUN yarn tsc -p tsconfig.build.json --sourceMap --inlineSources
-# Install only production dependencies
-RUN yarn install --frozen-lockfile --production=true --ignore-scripts && yarn cache clean
+# Keep all dependencies for playground (including dev dependencies)
+RUN yarn cache clean
 
 USER node
 

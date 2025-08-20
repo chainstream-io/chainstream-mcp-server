@@ -1,5 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Tool } from '../../../src';
+import { Tool } from '../../../dist';
 import { DexClient } from '@chainstream-io/dex';
 import { z } from 'zod';
 
@@ -11,7 +11,7 @@ type SortByField = 'marketCapInUsd' | 'liquidityInUsd' | 'priceInUsd' | 'holderC
 
 @Injectable()
 export class TokenTool {
-  constructor(private readonly dexClient: DexClient) {}
+  // Remove constructor injection of DexClient
 
   @Tool({
     name: 'getToken',

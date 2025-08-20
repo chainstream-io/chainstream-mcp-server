@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { randomUUID } from 'crypto';
-import { McpModule } from '../../src';
+import { McpModule } from '../../dist';
 import { RankingResource } from '../resources/ranking/ranking.resource';
 import { RankingTool } from '../resources/ranking/ranking.tool';
 import { RankingPrompt } from '../resources/ranking/ranking.prompt';

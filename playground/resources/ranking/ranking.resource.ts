@@ -1,5 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Resource, ResourceTemplate } from '../../../src';
+import { Resource, ResourceTemplate } from '../../../dist';
 import { DexClient } from '@chainstream-io/dex';
 
 // Define supported chain types based on SDK
