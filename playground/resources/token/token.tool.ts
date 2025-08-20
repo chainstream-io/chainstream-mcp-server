@@ -1,7 +1,9 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable, Scope, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Tool } from '../../../dist';
 import { DexClient } from '@chainstream-io/dex';
 import { z } from 'zod';
+import { Request } from 'express';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
@@ -9,9 +11,9 @@ type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimis
 // Define supported sort fields
 type SortByField = 'marketCapInUsd' | 'liquidityInUsd' | 'priceInUsd' | 'holderCount' | 'h24VolumeInUsd' | 'h24Transactions' | 'tokenCreatedAt';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TokenTool {
-  // Remove constructor injection of DexClient
+  constructor(@Inject(REQUEST) private request: Request) {}
 
   @Tool({
     name: 'getToken',
@@ -28,10 +30,11 @@ export class TokenTool {
       openWorldHint: false,
     },
   })
-  async getToken(req: Request, { chain, tokenAddress }) {
+  async getToken({ chain, tokenAddress }) {
     try {
       // Get accessToken from request headers
-      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
 
       // Validate accessToken
       if (!accessToken) {
@@ -103,10 +106,11 @@ export class TokenTool {
       openWorldHint: false,
     },
   })
-  async searchTokens(req: Request, { chain, query, category, limit, sort, sortBy, protocols, cursor }) {
+  async searchTokens({ chain, query, category, limit, sort, sortBy, protocols, cursor }) {
     try {
       // Get accessToken from request headers
-      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
 
       // Validate accessToken
       if (!accessToken) {

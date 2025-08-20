@@ -1,7 +1,9 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable, Scope, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Tool } from '../../../dist';
 import { DexClient } from '@chainstream-io/dex';
 import { z } from 'zod';
+import { Request } from 'express';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
@@ -12,8 +14,10 @@ type Duration = '1m' | '5m' | '1h' | '4h' | '24h';
 // Define supported sort fields for ranking
 type RankingSortByField = 'marketData.priceInUsd' | 'stats.priceChangeRatioInUsd1m' | 'stats.priceChangeRatioInUsd5m' | 'stats.priceChangeRatioInUsd1h' | 'stats.priceChangeRatioInUsd4h' | 'stats.priceChangeRatioInUsd24h' | 'marketData.marketCapInUsd' | 'marketData.tvlInUsd' | 'marketData.top10HoldingsRatio' | 'marketData.top100HoldingsRatio' | 'marketData.holders' | 'stats.trades1m' | 'stats.trades5m' | 'stats.trades1h' | 'stats.trades4h' | 'stats.trades24h' | 'stats.traders1m' | 'stats.traders5m' | 'stats.traders1h' | 'stats.traders4h' | 'stats.traders24h' | 'stats.volumesInUsd1m' | 'stats.volumesInUsd5m' | 'stats.volumesInUsd1h' | 'stats.volumesInUsd4h' | 'stats.volumesInUsd24h' | 'tokenCreatedAt';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class RankingTool {
+  constructor(@Inject(REQUEST) private request: Request) {}
+
   @Tool({
     name: 'getHotTokens',
     description: 'Get hot tokens ranking by chain and duration with advanced filters',
@@ -33,10 +37,11 @@ export class RankingTool {
       openWorldHint: false,
     },
   })
-  async getHotTokens(req: Request, { chain, duration, sortBy, sortDirection, filterBy }) {
+  async getHotTokens({ chain, duration, sortBy, sortDirection, filterBy }) {
     try {
       // Get accessToken from request headers
-      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
 
       // Validate accessToken
       if (!accessToken) {
@@ -54,7 +59,6 @@ export class RankingTool {
       if (!supportedDurations.includes(duration as Duration)) {
         throw new Error(`Unsupported duration: ${duration}. Supported durations: ${supportedDurations.join(', ')}`);
       }
-
       // Initialize DexClient with provided accessToken
       const dexClient = new DexClient(accessToken);
 
