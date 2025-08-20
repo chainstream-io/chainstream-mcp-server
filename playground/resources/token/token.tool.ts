@@ -17,7 +17,7 @@ export class TokenTool {
     name: 'getToken',
     description: 'Get token information by chain and address',
     parameters: z.object({
-      chain: z.string().describe('Chain name'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       tokenAddress: z.string().describe('Token contract address'),
     }),
     annotations: {
@@ -28,17 +28,20 @@ export class TokenTool {
       openWorldHint: false,
     },
   })
-  async getToken({ chain, tokenAddress, accessToken }) {
+  async getToken(req: Request, { chain, tokenAddress }) {
     try {
-      // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
-      if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
-      }
+      // Get accessToken from request headers
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
 
       // Validate accessToken
       if (!accessToken) {
         throw new Error('Access token is required. Please provide a valid JWT token.');
+      }
+
+      // Validate chain parameter
+      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
       }
 
       // Initialize DexClient with provided accessToken
@@ -87,7 +90,7 @@ export class TokenTool {
     name: 'searchTokens',
     description: 'Search tokens by chain and query',
     parameters: z.object({
-      chain: z.string().describe('Chain name'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       query: z.string().min(1).describe('Search keyword'),
       category: z.string().optional().describe('Token category (optional)'),
       limit: z.number().min(1).max(100).optional().describe('Result limit (1-100)'),
@@ -100,17 +103,20 @@ export class TokenTool {
       openWorldHint: false,
     },
   })
-  async searchTokens({ chain, query, category, limit, sort, sortBy, protocols, cursor, accessToken }) {
+  async searchTokens(req: Request, { chain, query, category, limit, sort, sortBy, protocols, cursor }) {
     try {
-      // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
-      if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
-      }
+      // Get accessToken from request headers
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
 
       // Validate accessToken
       if (!accessToken) {
         throw new Error('Access token is required. Please provide a valid JWT token.');
+      }
+
+      // Validate chain parameter
+      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
       }
 
       // Initialize DexClient with provided accessToken

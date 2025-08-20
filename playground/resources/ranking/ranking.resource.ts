@@ -19,12 +19,46 @@ export class RankingResource {
 
 🔐 **Authentication Required**: See playground/resources/README.md for ChainStream API authentication details.
 
+**Supported Chains**: 
+- sol (Solana)
+- base (Base)
+- bsc (Binance Smart Chain)
+- polygon (Polygon)
+- arbitrum (Arbitrum)
+- optimism (Optimism)
+- avalanche (Avalanche)
+- ethereum (Ethereum)
+- zksync (zkSync)
+- sui (Sui)
+
+**Chain Aliases**: You can also use these alternative names:
+- solana → sol
+- binance → bsc
+- matic → polygon
+- arb → arbitrum
+- op → optimism
+- avax → avalanche
+- eth → ethereum
+
+**Supported Durations**:
+- 1m (1 minute)
+- 5m (5 minutes) 
+- 1h (1 hour)
+- 4h (4 hours)
+- 24h (24 hours)
+
 **API Documentation**: https://docs.chainstream.io/en/api-reference/endpoint/ranking/v1-ranking-chain-hottokens-duration`,
     mimeType: 'application/json',
     uriTemplate: 'mcp://dex/ranking/hot-tokens/{chain}/{duration}',
   })
-  async getHotTokens({ uri, chain, duration, accessToken }) {
+  async getHotTokens(req: Request, { uri, chain, duration }) {
+    const accessToken = req.headers.get('Authorization')?.split(' ')[1];
     try {
+      // Validate accessToken
+      if (!accessToken) {
+        throw new Error('Access token is required. Please provide a valid JWT token.');
+      }
+
       // Validate chain parameter
       const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
       if (!supportedChains.includes(chain as SupportedChain)) {
@@ -35,11 +69,6 @@ export class RankingResource {
       const supportedDurations: Duration[] = ['1m', '5m', '1h', '4h', '24h'];
       if (!supportedDurations.includes(duration as Duration)) {
         throw new Error(`Unsupported duration: ${duration}. Supported durations: ${supportedDurations.join(', ')}`);
-      }
-
-      // Validate accessToken
-      if (!accessToken) {
-        throw new Error('Access token is required. Please provide a valid JWT token.');
       }
 
       // Initialize DexClient with provided accessToken

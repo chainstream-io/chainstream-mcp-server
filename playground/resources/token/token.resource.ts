@@ -16,21 +16,45 @@ export class TokenResource {
 
 🔐 **Authentication Required**: See playground/resources/README.md for ChainStream API authentication details.
 
+**Supported Chains**: 
+- sol (Solana)
+- base (Base)
+- bsc (Binance Smart Chain)
+- polygon (Polygon)
+- arbitrum (Arbitrum)
+- optimism (Optimism)
+- avalanche (Avalanche)
+- ethereum (Ethereum)
+- zksync (zkSync)
+- sui (Sui)
+
+**Chain Aliases**: You can also use these alternative names:
+- solana → sol
+- binance → bsc
+- matic → polygon
+- arb → arbitrum
+- op → optimism
+- avax → avalanche
+- eth → ethereum
+
 **API Documentation**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1-token-search`,
     mimeType: 'application/json',
     uriTemplate: 'mcp://dex/token/{chain}/{tokenAddress}',
   })
-  async getToken({ uri, chain, tokenAddress, accessToken }) {
+  async getToken(req: Request, { uri, chain, tokenAddress }) {
     try {
-      // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
-      if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
-      }
+      // Get accessToken from request headers
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
 
       // Validate accessToken
       if (!accessToken) {
         throw new Error('Access token is required. Please provide a valid JWT token.');
+      }
+
+      // Validate chain parameter
+      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
       }
 
       // Initialize DexClient with provided accessToken
@@ -41,7 +65,7 @@ export class TokenResource {
         chain: chain as SupportedChain,
         tokenAddress: tokenAddress
       });
-      
+
       return {
         contents: [
           {
@@ -81,21 +105,45 @@ export class TokenResource {
 
 🔐 **Authentication Required**: See playground/resources/README.md for ChainStream API authentication details.
 
+**Supported Chains**: 
+- sol (Solana)
+- base (Base)
+- bsc (Binance Smart Chain)
+- polygon (Polygon)
+- arbitrum (Arbitrum)
+- optimism (Optimism)
+- avalanche (Avalanche)
+- ethereum (Ethereum)
+- zksync (zkSync)
+- sui (Sui)
+
+**Chain Aliases**: You can also use these alternative names:
+- solana → sol
+- binance → bsc
+- matic → polygon
+- arb → arbitrum
+- op → optimism
+- avax → avalanche
+- eth → ethereum
+
 **API Documentation**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1-token-search`,
     mimeType: 'application/json',
     uriTemplate: 'mcp://dex/token/search/{chain}/{query}',
   })
-  async searchTokens({ uri, chain, query, accessToken }) {
+  async searchTokens(req: Request, { uri, chain, query }) {
     try {
-      // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
-      if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
-      }
+      // Get accessToken from request headers
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
 
       // Validate accessToken
       if (!accessToken) {
         throw new Error('Access token is required. Please provide a valid JWT token.');
+      }
+
+      // Validate chain parameter
+      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
       }
 
       // Initialize DexClient with provided accessToken
@@ -141,7 +189,7 @@ export class TokenResource {
 
       // Call SDK search method with all parameters
       const searchResults = await dexClient.token.search(searchParams);
-      
+
       return {
         contents: [
           {
