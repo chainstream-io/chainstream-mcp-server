@@ -1,0 +1,97 @@
+{
+  "name": "dex-mcp-server",
+  "version": "1.0.0",
+  "description": "Dex MCP Server",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chainstream-io/mcp-dex-aggregator"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json --sourceMap --inlineSources",
+    "prepare": "npm run build",
+    "start:playground": "ts-node-dev --respawn playground/servers/server-stateful.ts",
+    "start:fastify": "ts-node-dev --respawn playground/servers/server-fastify.ts",
+    "test": "npx --node-options=--experimental-vm-modules jest",
+    "test:watch": "npx --node-options=--experimental-vm-modules jest --watch",
+    "test:fastify": "ts-node playground/clients/http-fastify-client.ts",
+    "lint": "eslint \"{src,apps,libs,tests}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"playground/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "peerDependencies": {
+    "@modelcontextprotocol/sdk": ">=1.10.0",
+    "@nestjs/common": ">=9.0.0",
+    "@nestjs/core": ">=9.0.0",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-fastify": "^11.1.5",
+    "@nestjs/typeorm": ">=9.0.0",
+    "express": ">=4.0.0",
+    "reflect-metadata": ">=0.1.14",
+    "typeorm": ">=0.3.25",
+    "zod": "^3.0.0",
+    "zod-to-json-schema": ">=3.23.0"
+  },
+  "peerDependenciesMeta": {
+    "@nestjs/platform-fastify": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@nestjs/common": "^11.1.1",
+    "@nestjs/core": "^11.1.1",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-express": "^11.1.1",
+    "@nestjs/platform-fastify": "^11.1.6",
+    "@nestjs/testing": "^11.1.1",
+    "@nestjs/typeorm": "^10.0.2",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/express": "^5.0.2",
+    "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.10.10",
+    "@types/passport-github": "^1.1.12",
+    "@types/passport-google-oauth20": "^2.0.16",
+    "@types/supertest": "^6.0.3",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "express": "^4.21.2",
+    "jest": "^29.7.0",
+    "jsonwebtoken": "^9.0.2",
+    "reflect-metadata": "^0.2.1",
+    "supertest": "^7.1.3",
+    "ts-jest": "^29.4.0",
+    "ts-node-dev": "^2.0.0",
+    "typeorm": "^0.3.20",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.20.0",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.22.3"
+  },
+  "dependencies": {
+    "@chainstream-io/dex": "^0.0.94",
+    "@nestjs/config": "^4.0.2",
+    "cookie-parser": "^1.4.7",
+    "passport": "^0.7.0",
+    "passport-github": "^1.1.0",
+    "passport-google-oauth20": "^2.0.0",
+    "path-to-regexp": "^8.2.0",
+    "rxjs": "^7.8.2"
+  }
+}
