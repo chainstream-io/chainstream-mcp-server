@@ -106,6 +106,9 @@ export class RankingResource {
       // Call SDK getHotTokens method with all parameters
       const hotTokens = await dexClient.ranking.getHotTokens(searchParams);
 
+      // Limit results to maximum 10 items
+      const limitedHotTokens = Array.isArray(hotTokens) ? hotTokens.slice(0, 10) : hotTokens;
+
       return {
         contents: [
           {
@@ -114,7 +117,9 @@ export class RankingResource {
             text: JSON.stringify({
               chain: chain,
               duration: duration,
-              hotTokens: hotTokens,
+              hotTokens: limitedHotTokens,
+              totalCount: Array.isArray(hotTokens) ? hotTokens.length : 1,
+              returnedCount: Array.isArray(hotTokens) ? Math.min(hotTokens.length, 10) : 1,
               searchParams: {
                 sortBy,
                 sortDirection,

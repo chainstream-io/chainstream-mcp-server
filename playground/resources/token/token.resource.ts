@@ -190,6 +190,9 @@ export class TokenResource {
       // Call SDK search method with all parameters
       const searchResults = await dexClient.token.search(searchParams);
 
+      // Limit results to maximum 10 items
+      const limitedResults = Array.isArray(searchResults.data) ? searchResults.data.slice(0, 10) : searchResults.data;
+
       return {
         contents: [
           {
@@ -198,7 +201,9 @@ export class TokenResource {
             text: JSON.stringify({
               chain: chain,
               query: decodeURIComponent(query),
-              results: searchResults,
+              results: limitedResults,
+              totalCount: searchResults.total,
+              returnedCount: limitedResults.length,
               searchParams: {
                 limit,
                 sort,
