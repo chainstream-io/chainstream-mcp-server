@@ -1,7 +1,7 @@
 import { Injectable, Scope, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Tool } from '../../../dist';
-import { DexClient } from '@chainstream-io/dex';
+import { DexClient } from '@chainstream-io/sdk';
 import { z } from 'zod';
 import { Request } from 'express';
 

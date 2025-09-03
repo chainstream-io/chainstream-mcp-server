@@ -8,6 +8,12 @@ import { RankingPrompt } from '../resources/ranking/ranking.prompt';
 import { TokenResource } from '../resources/token/token.resource';
 import { TokenTool } from '../resources/token/token.tool';
 import { TokenPrompt } from '../resources/token/token.prompt';
+import { DexResource } from '../resources/dex/dex.resource';
+import { TransactionResource } from '../resources/transaction/transaction.resource';
+import { DexTool } from '../resources/dex/dex.tool';
+import { TransactionTool } from '../resources/transaction/transaction.tool';
+import { DexPrompt } from '../resources/dex/dex.prompt';
+import { TransactionPrompt } from '../resources/transaction/transaction.prompt';
 
 // Note: The stateful server exposes SSE and Streamable HTTP endpoints.
 @Module({
@@ -32,6 +38,12 @@ import { TokenPrompt } from '../resources/token/token.prompt';
     TokenResource,
     TokenTool,
     TokenPrompt,
+    DexResource,
+    DexTool,
+    DexPrompt,
+    TransactionResource,
+    TransactionTool,
+    TransactionPrompt,
   ],
 })
 export class AppModule {}

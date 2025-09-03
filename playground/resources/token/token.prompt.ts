@@ -11,7 +11,7 @@ export class TokenPrompt {
     description: 'Token research and analysis guide',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chainId: z.string().describe('Chain ID'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
     }),
   })
   getTokenResearchGuide({ tokenAddress, chainId }) {

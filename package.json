@@ -85,7 +85,7 @@
     "zod-to-json-schema": "^3.22.3"
   },
   "dependencies": {
-    "@chainstream-io/dex": "^0.0.94",
+    "@chainstream-io/sdk": "^0.0.4",
     "@nestjs/config": "^4.0.2",
     "cookie-parser": "^1.4.7",
     "passport": "^0.7.0",
