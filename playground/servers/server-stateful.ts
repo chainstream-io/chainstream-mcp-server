@@ -14,6 +14,9 @@ import { DexTool } from '../resources/dex/dex.tool';
 import { TransactionTool } from '../resources/transaction/transaction.tool';
 import { DexPrompt } from '../resources/dex/dex.prompt';
 import { TransactionPrompt } from '../resources/transaction/transaction.prompt';
+import { WalletResource } from '../resources/wallet/wallet.resource';
+import { WalletTool } from '../resources/wallet/wallet.tool';
+import { WalletPrompt } from '../resources/wallet/wallet.prompt';
 
 // Note: The stateful server exposes SSE and Streamable HTTP endpoints.
 @Module({
@@ -44,6 +47,9 @@ import { TransactionPrompt } from '../resources/transaction/transaction.prompt';
     TransactionResource,
     TransactionTool,
     TransactionPrompt,
+    WalletResource,
+    WalletTool,
+    WalletPrompt,
   ],
 })
 export class AppModule {}
