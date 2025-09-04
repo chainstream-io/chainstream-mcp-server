@@ -17,13 +17,7 @@ export class TransactionTool {
     description: 'Send a transaction on a specific chain',
     parameters: z.object({
       chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
-      to: z.string().describe('Recipient address'),
-      value: z.string().describe('Amount to send (in wei/smallest unit)'),
-      data: z.string().optional().describe('Transaction data (optional, for contract interactions)'),
-      gasLimit: z.number().optional().describe('Gas limit for the transaction'),
-      gasPrice: z.string().optional().describe('Gas price in wei (optional)'),
-      walletAddress: z.string().describe('Sender wallet address'),
-      privateKey: z.string().optional().describe('Private key for transaction signing (optional if using wallet connect)'),
+      signedTx: z.string().describe('Base64 encoded signed transaction'),
     }),
     annotations: {
       title: 'Transaction Sending Tool',

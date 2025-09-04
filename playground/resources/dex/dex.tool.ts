@@ -127,7 +127,6 @@ export class DexTool {
       amount: z.string().describe('Amount to swap (in wei/smallest unit)'),
       slippage: z.number().min(0.1).max(50).optional().describe('Slippage tolerance in percentage (0.1-50, default: 20)'),
       walletAddress: z.string().describe('User wallet address for the swap'),
-      privateKey: z.string().optional().describe('Private key for transaction signing (optional if using wallet connect)'),
       dex: z.enum(['jupiter', 'kyberswap', 'raydium', 'pumpfun', 'moonshot', 'candy', 'launchpad']).optional().describe('DEX to use for swap execution (default: raydium)'),
     }),
     annotations: {
@@ -138,7 +137,7 @@ export class DexTool {
       openWorldHint: false,
     },
   })
-  async executeSwap({ chain, fromToken, toToken, amount, slippage = 20, walletAddress, privateKey, dex = 'raydium' }) {
+  async executeSwap({ chain, fromToken, toToken, amount, slippage = 20, walletAddress, dex = 'raydium' }) {
     try {
       // Get accessToken from request headers
       const authHeader = this.request.headers.authorization;

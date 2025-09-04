@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
-  ECR_REPOSITORY: dexes/dex-mcp-server
+  ECR_REPOSITORY: dexes/chainstream-mcp-server
   DOCKER_REGISTRY: 440744256864.dkr.ecr.ap-southeast-1.amazonaws.com
 
 jobs:
