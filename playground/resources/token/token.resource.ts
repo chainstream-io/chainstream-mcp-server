@@ -1,6 +1,6 @@
+import { DexClient } from '@chainstream-io/sdk';
 import { Injectable, Scope } from '@nestjs/common';
 import { Resource, ResourceTemplate } from '../../../dist';
-import { DexClient } from '@chainstream-io/sdk';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
@@ -226,6 +226,96 @@ export class TokenResource {
               error: 'Failed to search tokens',
               chain: chain,
               query: decodeURIComponent(query),
+              message: error.message,
+              timestamp: new Date().toISOString(),
+            }, null, 2),
+          },
+        ],
+      };
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getTokenMetadata',
+    description: `Get detailed metadata of a token by chain and address.
+  
+  🔐 **Authentication Required**: See playground/resources/README.md for ChainStream API authentication details.
+  
+  **Supported Chains**: 
+  - sol (Solana)
+  - base (Base)
+  - bsc (Binance Smart Chain)
+  - polygon (Polygon)
+  - arbitrum (Arbitrum)
+  - optimism (Optimism)
+  - avalanche (Avalanche)
+  - ethereum (Ethereum)
+  - zksync (zkSync)
+  - sui (Sui)
+  
+  **Chain Aliases**: 
+  - solana → sol
+  - binance → bsc
+  - matic → polygon
+  - arb → arbitrum
+  - op → optimism
+  - avax → avalanche
+  - eth → ethereum
+  
+  **API Documentation**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-metadata-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/metadata/{chain}/{tokenAddress}',
+  })
+  async getTokenMetadata(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      // Get accessToken from request headers
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required. Please provide a valid JWT token.');
+      }
+  
+      // Validate chain parameter
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
+      }
+  
+      // Initialize DexClient with provided accessToken
+      const dexClient = new DexClient(accessToken);
+  
+      // Call SDK metadata method
+      const metadata = await dexClient.token.getMetadata({
+        chain: chain as SupportedChain,
+        tokenAddress: tokenAddress,
+      });
+  
+      return {
+        contents: [
+          {
+            uri: uri, // Required by MCP protocol
+            mimeType: 'application/json',
+            text: JSON.stringify({
+              chain,
+              tokenAddress,
+              metadata,
+              timestamp: new Date().toISOString(),
+            }, null, 2),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri: uri, // Required by MCP protocol
+            mimeType: 'application/json',
+            text: JSON.stringify({
+              error: 'Failed to get token metadata',
+              chain,
+              tokenAddress,
               message: error.message,
               timestamp: new Date().toISOString(),
             }, null, 2),

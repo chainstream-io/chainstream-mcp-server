@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Prompt } from '../../../dist';
 import { z } from 'zod';
+import { Prompt } from '../../../dist';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TokenPrompt {
@@ -14,7 +14,7 @@ export class TokenPrompt {
       chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
     }),
   })
-  getTokenResearchGuide({ tokenAddress, chainId }) {
+  getTokenResearchGuide({ tokenAddress, chain }) {
     return {
       description: 'Token research analysis guide',
       messages: [
@@ -22,7 +22,7 @@ export class TokenPrompt {
           role: 'user',
           content: {
             type: 'text',
-            text: `Please help me research token ${tokenAddress} on chain ${chainId}.`,
+            text: `Please help me research token ${tokenAddress} on chain ${chain}.`,
           },
         },
         {
@@ -97,6 +97,46 @@ Please use the getToken tool to get detailed information.`,
           content: {
             type: 'text',
             text: strategy,
+          },
+        },
+      ],
+    };
+  }
+
+  // 获取 Token Metadata
+  @Prompt({
+    name: 'token-metadata-guide',
+    description: 'Guide to fetch token metadata information',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+    }),
+  })
+  getTokenMetadataGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token metadata fetch guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch metadata for token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve the token metadata including:
+- Name, symbol, decimals
+- Metadata address
+- Token creators and verification
+- Image/logo URL
+- Social media links
+- Extra attributes (program, authorities, standards, etc.)
+- Creation date and description
+
+Please use the getTokenMetadata tool to fetch the actual data from the API.`,
           },
         },
       ],
