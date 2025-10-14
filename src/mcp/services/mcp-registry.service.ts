@@ -9,6 +9,8 @@ import {
   MetadataScanner,
   ModulesContainer,
 } from '@nestjs/core';
+import { Module } from '@nestjs/core/injector/module';
+import { match } from 'path-to-regexp';
 import {
   MCP_PROMPT_METADATA_KEY,
   MCP_RESOURCE_METADATA_KEY,
@@ -16,11 +18,9 @@ import {
   MCP_TOOL_METADATA_KEY,
   ToolMetadata,
 } from '../decorators';
-import { ResourceMetadata } from '../decorators/resource.decorator';
-import { match } from 'path-to-regexp';
 import { PromptMetadata } from '../decorators/prompt.decorator';
-import { Module } from '@nestjs/core/injector/module';
 import { ResourceTemplateMetadata } from '../decorators/resource-template.decorator';
+import { ResourceMetadata } from '../decorators/resource.decorator';
 
 /**
  * Interface representing a discovered tool

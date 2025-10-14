@@ -142,4 +142,160 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
+
+  @Prompt({
+    name: 'token-liquidity-pools',
+    description: 'Get all liquidity pools containing the specified token',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+    }),
+  })
+  getTokenLiquidityPools({ tokenAddress, chain }) {
+    return {
+      description: 'Token liquidity pool query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please help me find all liquidity pools that include token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve all liquidity pools that contain this token on the specified chain. This includes:
+  - Pool address
+  - Protocol name and family
+  - Token pair (A/B)
+  - TVL (Total Value Locked) in USD and native token
+  - Associated program and image
+  
+  Please use the getTokenLiquidityPools tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
+  @Prompt({
+    name: 'token-stats-guide',
+    description: 'Guide to fetch token statistics across multiple timeframes',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+    }),
+  })
+  getTokenStatsGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token statistics query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please provide statistical data for token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve token statistics including:
+  - Price movements across timeframes (1m, 5m, 15m, 30m, 1h, 4h, 24h)
+  - Buy/sell volumes and counts
+  - Trader activity and trade counts
+  - High/low/open/close prices
+  - Price change ratios
+  
+  Please use the getTokenStats tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'token-holders-guide',
+    description: 'Guide to fetch holders of a token',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+    }),
+  })
+  getTokenHoldersGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token holders query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the holders of token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the list of wallets holding this token, including:
+  - Wallet address
+  - Holding amount
+  - USD value
+  - Percentage of total supply
+  
+  Please use the getTokenHolders tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'token-candles-guide',
+    description: 'Guide to fetch token price candles (OHLC data)',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      resolution: z.enum(['1s', '15s', '30s', '1m', '5m', '15m', '1h', '4h', '12h', '1d']).describe('Time resolution for candle data'),
+      from: z.string().optional().describe('Start timestamp (Unix epoch in milliseconds)'),
+      to: z.string().optional().describe('End timestamp (Unix epoch in milliseconds)'),
+      limit: z.string().optional().describe('Number of results per page'),
+    }),
+  })
+  getTokenCandlesGuide({ tokenAddress, chain, resolution, from, to, limit }) {
+    return {
+      description: 'Token price candles query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the ${resolution} price candles for token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's price candles including:
+  - Open, High, Low, Close prices
+  - Volume and timestamp
+  - Resolution: ${resolution}
+  ${from ? `- From: ${new Date(Number(from)).toISOString()}` : ''}
+  ${to ? `- To: ${new Date(Number(to)).toISOString()}` : ''}
+  ${limit ? `- Limit: ${limit}` : ''}
+  
+  Please use the getTokenCandles tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  
+  
 }
