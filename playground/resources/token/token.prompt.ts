@@ -296,6 +296,322 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
     };
   }
   
+  @Prompt({
+    name: 'token-top-holders-guide',
+    description: 'Guide to fetch the top 20 holders of a token',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+    }),
+  })
+  getTokenTopHoldersGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token top holders query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the top 20 holders of token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the top 20 holders of this token, including:
+  - Wallet address
+  - Holding amount
+  - USD value
+  - Percentage of total supply
   
+  Please use the getTokenTopHolders tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'token-market-data-guide',
+    description: 'Guide to fetch market data of a token',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+    }),
+  })
+  getTokenMarketDataGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token market data query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the market data of token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's market data including:
+  - Total supply
+  - Market cap (USD & native token)
+  - Top 10 & Top 100 holdings ratios
+  - Number of holders
+  - Price in USD & native token
+  - TVL (Total Value Locked)
+  - Developer team holdings
+  
+  Please use the getTokenMarketData tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
+  @Prompt({
+    name: 'token-prices-guide',
+    description: 'Guide to fetch historical price data for a token',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1-100)'),
+      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+    }),
+  })
+  getTokenPricesGuide({ tokenAddress, chain, cursor, limit, direction }) {
+    return {
+      description: 'Token historical prices query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the historical price data for token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's historical price data including:
+  - Price in USD
+  - Price in native token
+  - Timestamp
+  - Pagination info (cursor, hasNext, hasPrev)
+  
+  Please use the getTokenPrices tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+ 
+  @Prompt({
+    name: 'token-price-by-time-guide',
+    description: 'Guide to fetch token price at a specific timestamp',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      timestamp: z.string().describe('Timestamp for price query (Unix epoch in seconds)'),
+    }),
+  })
+  getTokenPriceByTimeGuide({ tokenAddress, chain, timestamp }) {
+    return {
+      description: 'Token price by time query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the price of token ${tokenAddress} on chain ${chain} at timestamp ${timestamp}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's price at the given timestamp, including:
+  - Price in USD
+  - Price in native token
+  - Exact timestamp
+  
+  Please use the getTokenPriceByTime tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'token-creation-guide',
+    description: 'Guide to fetch token creation information',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+    }),
+  })
+  getTokenCreationGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token creation information query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the creation information of token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's creation information including:
+  - Block height, slot, and hash
+  - Block timestamp
+  - Transaction signature
+  - Creation type
+  
+  Please use the getTokenCreation tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'token-mint-burn-guide',
+    description: 'Guide to fetch mint and burn information for a token',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1-100)'),
+      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      type: z.enum(['all', 'mint', 'burn']).describe('Type of operation to filter'),
+    }),
+  })
+  getTokenMintBurnGuide({ tokenAddress, chain, cursor, limit, direction, type }) {
+    return {
+      description: 'Token mint and burn query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the ${type} operations for token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's mint and burn information including:
+  - Block details (height, slot, hash, timestamp)
+  - Transaction signature
+  - Operation type (mint or burn)
+  - Pagination info (cursor, hasNext, hasPrev)
+  
+  Please use the getTokenMintBurn tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'token-security-guide',
+    description: 'Guide to fetch token security information',
+    parameters: z.object({
+      tokenAddress: z.string().describe('Token contract address'),
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+    }),
+  })
+  getTokenSecurityGuide({ tokenAddress, chain }) {
+    return {
+      description: 'Token security information query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me the security information of token ${tokenAddress} on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token's security information including:
+  - Authorities and permissions
+  - Freezable, mintable, closable status
+  - Holder distribution
+  - Metadata and trusted token status
+  - DEX liquidity and trading info
+  
+  Please use the getTokenSecurity tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
+  @Prompt({
+    name: 'token-list-filtered-guide',
+    description: 'Guide to fetch filtered token list with range conditions',
+    parameters: z.object({
+      chain: z.string().describe('Chain name (sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)'),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1-100)'),
+      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      sort: z.enum(['asc', 'desc']).optional().describe('Sort direction'),
+      sortBy: z.string().optional().describe('Sort by field, e.g. h24VolumeInUsd'),
+    }),
+  })
+  getTokenListFilteredGuide({ chain, cursor, limit, direction, sort, sortBy }) {
+    return {
+      description: 'Token list (filtered) query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please show me a filtered token list on chain ${chain}, sorted by ${sortBy || 'h24VolumeInUsd'} in ${sort || 'desc'} order.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `Sure! I will retrieve the token list with filters, including:
+  - Pagination (cursor, limit, direction)
+  - Sorting (sort, sortBy)
+  - Range filters (volume, price change, trades, buyers, sellers, etc.)
+  
+  Please use the getTokenListFiltered tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
   
 }

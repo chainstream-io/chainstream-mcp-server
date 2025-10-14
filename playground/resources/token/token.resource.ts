@@ -674,5 +674,653 @@ export class TokenResource {
     }
   }
   
+  @ResourceTemplate({
+    name: 'getTokenTopHolders',
+    description: `Get the top 20 holders of a token including wallet address, amount, USD value, and percentage.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-topholders-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/topHolders/{chain}/{tokenAddress}',
+  })
+  async getTokenTopHolders(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const topHolders = await dexClient.token.getTopHolders({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                topHolders,
+                holderCount: topHolders?.total ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token top holders',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @ResourceTemplate({
+    name: 'getTokenMarketData',
+    description: `Get the market data of a token including supply, market cap, holdings ratios, holders, price, TVL, and dev team info.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-marketdata-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/marketData/{chain}/{tokenAddress}',
+  })
+  async getTokenMarketData(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const marketData = await dexClient.token.getMarketData({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                marketData,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token market data',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @ResourceTemplate({
+    name: 'getTokenPrices',
+    description: `Get historical price data for a token including USD price, native price, and timestamp.
+  
+  🔐 Authentication Required
+  
+  **Query Parameters**:
+  - cursor: pagination cursor
+  - limit: number of results per page (1-100)
+  - direction: next | prev
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-prices-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/prices/{chain}/{tokenAddress}?cursor={cursor}&limit={limit}&direction={direction}',
+  })
+  async getTokenPrices(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const url = new URL(uri);
+      const cursor = url.searchParams.get('cursor') ?? undefined;
+      const limitParam = url.searchParams.get('limit');
+      const limit = limitParam !== null && limitParam !== undefined ? parseInt(limitParam) : undefined;
+      const directionParam = url.searchParams.get('direction');
+      const direction = (directionParam === 'next' || directionParam === 'prev') ? directionParam : undefined;
+
+      const dexClient = new DexClient(accessToken);
+      const prices = await dexClient.token.getPrices({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        cursor,
+        limit,
+        direction,
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                cursor,
+                limit,
+                direction,
+                prices,
+                count: prices?.data?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token prices',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @ResourceTemplate({
+    name: 'getTokenPriceByTime',
+    description: `Get token price at a specific timestamp including USD price, native price, and timestamp.
+  
+  🔐 Authentication Required
+  
+  **Query Parameters**:
+  - timestamp: Unix epoch in seconds
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-price-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/price/{chain}/{tokenAddress}?timestamp={timestamp}',
+  })
+  async getTokenPriceByTime(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const url = new URL(uri);
+      const timestamp = url.searchParams.get('timestamp');
+      if (!timestamp) {
+        throw new Error('Timestamp is required.');
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const price = await dexClient.token.getPriceByTime({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        timestamp: parseInt(timestamp),
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                timestamp,
+                price,
+                timestampISO: new Date(parseInt(timestamp) * 1000).toISOString(),
+                queryTime: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token price by time',
+                chain,
+                tokenAddress,
+                message: error.message,
+                queryTime: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+ 
+  
+  @ResourceTemplate({
+    name: 'getTokenCreation',
+    description: `Get token creation information including block details, timestamp, transaction signature, and type.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-creation-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/creation/{chain}/{tokenAddress}',
+  })
+  async getTokenCreation(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const creation = await dexClient.token.getCreation({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                creation,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,  
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token creation information',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @ResourceTemplate({
+    name: 'getTokenMintBurn',
+    description: `Get mint and burn information for a token including block details, transaction signature, and type.
+  
+  🔐 Authentication Required
+  
+  **Query Parameters**:
+  - cursor: pagination cursor
+  - limit: number of results per page (1-100)
+  - direction: next | prev
+  - type: all | mint | burn
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-mintandburn-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/mintAndBurn/{chain}/{tokenAddress}?cursor={cursor}&limit={limit}&direction={direction}&type={type}',
+  })
+  async getTokenMintBurn(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const url = new URL(uri);
+      const cursor = url.searchParams.get('cursor') ?? undefined;
+      const limitParam = url.searchParams.get('limit');
+      const limit = limitParam !== null ? parseInt(limitParam) : undefined;
+      const directionParam = url.searchParams.get('direction');
+      const direction = directionParam === 'next' || directionParam === 'prev' ? directionParam : undefined;
+      const typeParam = url.searchParams.get('type');
+      const type = typeParam === 'mint' || typeParam === 'burn' || typeParam === 'all' ? typeParam : undefined;
+
+      const dexClient = new DexClient(accessToken);
+  
+      const mintBurn = await dexClient.token.getMintAndBurn({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        cursor,
+        limit,
+        direction,
+        type: (type as 'mint' | 'burn' | 'all') ?? 'all',
+      });
+
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                cursor,
+                limit,
+                direction,
+                type,
+                mintBurn,
+                count: mintBurn?.data?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token mint and burn information',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @ResourceTemplate({
+    name: 'getTokenSecurity',
+    description: `Get token security information including authorities, permissions, holder distribution, metadata, and DEX liquidity.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-tokenaddress-security-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/security/{chain}/{tokenAddress}',
+  })
+  async getTokenSecurity(req: Request, { uri, chain, tokenAddress }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const security = await dexClient.token.getSecurity({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                tokenAddress,
+                security,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get token security information',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @ResourceTemplate({
+    name: 'getTokenListFiltered',
+    description: `Get filtered token list with range conditions, supporting pagination, sorting, and min/max filters.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/token/v1/token-chain-list-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/token/list/{chain}?cursor={cursor}&limit={limit}&direction={direction}&sort={sort}&sortBy={sortBy}',
+  })
+  async getTokenListFiltered(req: Request, { uri, chain }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const url = new URL(uri);
+      const query: Record<string, string> = {};
+      url.searchParams.forEach((value, key) => {
+        query[key] = value;
+      });
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const list = await dexClient.token.getTokenList({
+        chain: chain as SupportedChain,
+        ...query,
+      });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                filters: query,
+                list,
+                count: list?.data?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get filtered token list',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
   
 }

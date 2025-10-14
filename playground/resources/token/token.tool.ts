@@ -462,7 +462,7 @@ export class TokenTool {
     try {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
-      if (!accessToken) throw new Error('Access token is required.');
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
   
       const supportedChains: SupportedChain[] = [
         'sol', 'base', 'bsc', 'polygon', 'arbitrum',
@@ -519,6 +519,806 @@ export class TokenTool {
               message: error.message,
               timestamp: new Date().toISOString(),
             }, null, 2),
+          },
+        ],
+      };
+    }
+  }
+  
+  @Tool({
+    name: 'getTokenTopHolders',
+    description: 'Get the top 20 holders of a token by chain and address',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+    }),
+    annotations: {
+      title: 'Token Top Holders Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenTopHolders({ chain, tokenAddress }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const topHolders = await dexClient.token.getTopHolders({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                topHolders,
+                holderCount: topHolders?.total ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token top holders',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+
+  @Tool({
+    name: 'getTokenMarketData',
+    description: 'Get the market data of a token by chain and address',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+    }),
+    annotations: {
+      title: 'Token Market Data Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenMarketData({ chain, tokenAddress }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const marketData = await dexClient.token.getMarketData({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                marketData,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token market data',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+    
+  @Tool({
+    name: 'getTokenPrices',
+    description: 'Get historical price data for a token',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1-100)'),
+      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+    }),
+    annotations: {
+      title: 'Token Prices Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenPrices({ chain, tokenAddress, cursor, limit, direction }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const prices = await dexClient.token.getPrices({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        cursor,
+        limit: limit ? parseInt(limit) : undefined,
+        direction,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                cursor,
+                limit,
+                direction,
+                prices,
+                count: prices?.data?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token prices',
+                chain,
+                tokenAddress,
+                cursor,
+                limit,
+                direction,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+
+  @Tool({
+    name: 'getTokenPriceByTime',
+    description: 'Get token price at a specific timestamp',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+      timestamp: z.string().describe('Timestamp for price query (Unix epoch in seconds)'),
+    }),
+    annotations: {
+      title: 'Token Price by Time Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenPriceByTime({ chain, tokenAddress, timestamp }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const price = await dexClient.token.getPriceByTime({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        timestamp: parseInt(timestamp),
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                timestamp,
+                price,
+                timestampISO: new Date(parseInt(timestamp) * 1000).toISOString(),
+                queryTime: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token price by time',
+                chain,
+                tokenAddress,
+                timestamp,
+                message: error.message,
+                queryTime: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+   
+
+  @Tool({
+    name: 'getTokenCreation',
+    description: 'Get token creation information by chain and address',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+    }),
+    annotations: {
+      title: 'Token Creation Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenCreation({ chain, tokenAddress }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const creation = await dexClient.token.getCreation({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                creation,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token creation information',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @Tool({
+    name: 'getTokenMintBurn',
+    description: 'Get mint and burn information for a token',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1-100)'),
+      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      type: z.enum(['all', 'mint', 'burn']).describe('Type of operation to filter'),
+    }),
+    annotations: {
+      title: 'Token Mint and Burn Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenMintBurn({ chain, tokenAddress, cursor, limit, direction, type }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const mintBurn = await dexClient.token.getMintAndBurn({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        cursor,
+        limit: limit ? parseInt(limit) : undefined,
+        direction,
+        type,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                cursor,
+                limit,
+                direction,
+                type,
+                mintBurn,
+                count: mintBurn?.data?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token mint and burn information',
+                chain,
+                tokenAddress,
+                cursor,
+                limit,
+                direction,
+                type,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @Tool({
+    name: 'getTokenSecurity',
+    description: 'Get token security information by chain and address',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+    }),
+    annotations: {
+      title: 'Token Security Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenSecurity({ chain, tokenAddress }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const security = await dexClient.token.getSecurity({
+        chain: chain as SupportedChain,
+        tokenAddress,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                security,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get token security information',
+                chain,
+                tokenAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @Tool({
+    name: 'getTokenListFiltered',
+    description: 'Get filtered token list with range conditions',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1-100)'),
+      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      sort: z.enum(['asc', 'desc']).optional().describe('Sort direction'),
+      sortBy: z.string().optional().describe('Sort by field'),
+  
+      // 24h
+      min_h24_volume_in_usd: z.string().optional(),
+      max_h24_volume_in_usd: z.string().optional(),
+      min_h24_price_change_ratio: z.string().optional(),
+      max_h24_price_change_ratio: z.string().optional(),
+      min_h24_buys: z.string().optional(),
+      max_h24_buys: z.string().optional(),
+      min_h24_sells: z.string().optional(),
+      max_h24_sells: z.string().optional(),
+      min_h24_trades: z.string().optional(),
+      max_h24_trades: z.string().optional(),
+      min_h24_buyers: z.string().optional(),
+      max_h24_buyers: z.string().optional(),
+      min_h24_sellers: z.string().optional(),
+      max_h24_sellers: z.string().optional(),
+      min_h24_buy_volume_in_usd: z.string().optional(),
+      max_h24_buy_volume_in_usd: z.string().optional(),
+      min_h24_sell_volume_in_usd: z.string().optional(),
+      max_h24_sell_volume_in_usd: z.string().optional(),
+  
+      // 4h
+      min_h4_volume_in_usd: z.string().optional(),
+      max_h4_volume_in_usd: z.string().optional(),
+      min_h4_price_change_ratio: z.string().optional(),
+      max_h4_price_change_ratio: z.string().optional(),
+      min_h4_buys: z.string().optional(),
+      max_h4_buys: z.string().optional(),
+      min_h4_sells: z.string().optional(),
+      max_h4_sells: z.string().optional(),
+      min_h4_trades: z.string().optional(),
+      max_h4_trades: z.string().optional(),
+      min_h4_buyers: z.string().optional(),
+      max_h4_buyers: z.string().optional(),
+      min_h4_sellers: z.string().optional(),
+      max_h4_sellers: z.string().optional(),
+      min_h4_buy_volume_in_usd: z.string().optional(),
+      max_h4_buy_volume_in_usd: z.string().optional(),
+      min_h4_sell_volume_in_usd: z.string().optional(),
+      max_h4_sell_volume_in_usd: z.string().optional(),
+  
+      // 1h
+      min_h1_volume_in_usd: z.string().optional(),
+      max_h1_volume_in_usd: z.string().optional(),
+      min_h1_price_change_ratio: z.string().optional(),
+      max_h1_price_change_ratio: z.string().optional(),
+      min_h1_buys: z.string().optional(),
+      max_h1_buys: z.string().optional(),
+      min_h1_sells: z.string().optional(),
+      max_h1_sells: z.string().optional(),
+      min_h1_trades: z.string().optional(),
+      max_h1_trades: z.string().optional(),
+      min_h1_buyers: z.string().optional(),
+      max_h1_buyers: z.string().optional(),
+      min_h1_sellers: z.string().optional(),
+      max_h1_sellers: z.string().optional(),
+      min_h1_buy_volume_in_usd: z.string().optional(),
+      max_h1_buy_volume_in_usd: z.string().optional(),
+      min_h1_sell_volume_in_usd: z.string().optional(),
+      max_h1_sell_volume_in_usd: z.string().optional(),
+  
+      // 30m
+      min_m30_volume_in_usd: z.string().optional(),
+      max_m30_volume_in_usd: z.string().optional(),
+      min_m30_price_change_ratio: z.string().optional(),
+      max_m30_price_change_ratio: z.string().optional(),
+      min_m30_buys: z.string().optional(),
+      max_m30_buys: z.string().optional(),
+      min_m30_sells: z.string().optional(),
+      max_m30_sells: z.string().optional(),
+      min_m30_trades: z.string().optional(),
+      max_m30_trades: z.string().optional(),
+      min_m30_buyers: z.string().optional(),
+      max_m30_buyers: z.string().optional(),
+      min_m30_sellers: z.string().optional(),
+      max_m30_sellers: z.string().optional(),
+      min_m30_buy_volume_in_usd: z.string().optional(),
+      max_m30_buy_volume_in_usd: z.string().optional(),
+      min_m30_sell_volume_in_usd: z.string().optional(),
+      max_m30_sell_volume_in_usd: z.string().optional(),
+  
+      // 15m
+      min_m15_volume_in_usd: z.string().optional(),
+      max_m15_volume_in_usd: z.string().optional(),
+      min_m15_price_change_ratio: z.string().optional(),
+      max_m15_price_change_ratio: z.string().optional(),
+      min_m15_buys: z.string().optional(),
+      max_m15_buys: z.string().optional(),
+      min_m15_sells: z.string().optional(),
+      max_m15_sells: z.string().optional(),
+      min_m15_trades: z.string().optional(),
+      max_m15_trades: z.string().optional(),
+      min_m15_buyers: z.string().optional(),
+      max_m15_buyers: z.string().optional(),
+      min_m15_sellers: z.string().optional(),
+      max_m15_sellers: z.string().optional(),
+      min_m15_buy_volume_in_usd: z.string().optional(),
+      max_m15_buy_volume_in_usd: z.string().optional(),
+      min_m15_sell_volume_in_usd: z.string().optional(),
+      max_m15_sell_volume_in_usd: z.string().optional(),
+  
+      // 5m
+      min_m5_volume_in_usd: z.string().optional(),
+      max_m5_volume_in_usd: z.string().optional(),
+      min_m5_price_change_ratio: z.string().optional(),
+      max_m5_price_change_ratio: z.string().optional(),
+      min_m5_buys: z.string().optional(),
+      max_m5_buys: z.string().optional(),
+      min_m5_sells: z.string().optional(),
+      max_m5_sells: z.string().optional(),
+      min_m5_trades: z.string().optional(),
+      max_m5_trades: z.string().optional(),
+      min_m5_buyers: z.string().optional(),
+      max_m5_buyers: z.string().optional(),
+      min_m5_sellers: z.string().optional(),
+      max_m5_sellers: z.string().optional(),
+      min_m5_buy_volume_in_usd: z.string().optional(),
+      max_m5_buy_volume_in_usd: z.string().optional(),
+      min_m5_sell_volume_in_usd: z.string().optional(),
+      max_m5_sell_volume_in_usd: z.string().optional(),
+  
+      // 1m
+      min_m1_volume_in_usd: z.string().optional(),
+      max_m1_volume_in_usd: z.string().optional(),
+      min_m1_price_change_ratio: z.string().optional(),
+      max_m1_price_change_ratio: z.string().optional(),
+      min_m1_buys: z.string().optional(),
+      max_m1_buys: z.string().optional(),
+      min_m1_sells: z.string().optional(),
+      max_m1_sells: z.string().optional(),
+      min_m1_trades: z.string().optional(),
+      max_m1_trades: z.string().optional(),
+      min_m1_buyers: z.string().optional(),
+      max_m1_buyers: z.string().optional(),
+      min_m1_sellers: z.string().optional(),
+      max_m1_sellers: z.string().optional(),
+      min_m1_buy_volume_in_usd: z.string().optional(),
+      max_m1_buy_volume_in_usd: z.string().optional(),
+      min_m1_sell_volume_in_usd: z.string().optional(),
+      max_m1_sell_volume_in_usd: z.string().optional(),
+    }),
+    annotations: {
+      title: 'Token List Filtered Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenListFiltered(params) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required. Please provide a valid JWT token.');
+  
+      const { chain, ...query } = params;
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const list = await dexClient.token.getTokenList({
+        chain: chain as SupportedChain,
+        ...query,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                filters: query,
+                list,
+                count: list?.data?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get filtered token list',
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
           },
         ],
       };
