@@ -45,6 +45,45 @@ Please use the getToken tool to get detailed information.`,
   }
 
   @Prompt({
+    name: 'tokens-research-guide',
+    description: 'Guide to fetch details of multiple tokens',
+    parameters: z.object({
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+      sortBy: z.string().optional().describe('Sort field, e.g. marketData.marketCapInUsd'),
+      sortDirection: z.enum(['ASC', 'DESC']).optional().describe('Sort direction'),
+    }),
+  })
+  getTokensResearchGuide({ chain, tokenAddresses, sortBy, sortDirection }) {
+    return {
+      description: 'Multi-token research analysis guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please help me research multiple tokens [${tokenAddresses}] on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will provide comprehensive research for multiple tokens including:
+  - Basic information (name, symbol, supply)
+  - Market data (price, market cap, TVL)
+  - Trading stats (volume, trades, buyers/sellers)
+  - Sorting and filtering by chosen fields
+  
+  Please use the getTokens tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
+  @Prompt({
     name: 'token-search-strategy',
     description: 'Token search strategy guide',
     parameters: z.object({
@@ -144,6 +183,48 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
   }
 
   @Prompt({
+    name: 'tokens-metadata-guide',
+    description: 'Guide to fetch metadata for multiple tokens',
+    parameters: z.object({
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+    }),
+  })
+  getTokensMetadataGuide({ chain, tokenAddresses }) {
+    return {
+      description: 'Multi-token metadata fetch guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch metadata for tokens [${tokenAddresses}] on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve metadata for multiple tokens including:
+  - Name, symbol, decimals
+  - Metadata address
+  - Token creators and verification
+  - Image/logo URL
+  - Social media links
+  - Extra attributes (program, authorities, standards, etc.)
+  - Creation date and description
+  
+  Please use the getTokensMetadata tool to fetch the actual data from the API.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
+  @Prompt({
     name: 'token-liquidity-pools',
     description: 'Get all liquidity pools containing the specified token',
     parameters: z.object({
@@ -219,6 +300,46 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
   }
   
   @Prompt({
+    name: 'tokens-stats-guide',
+    description: 'Guide to fetch statistics for multiple tokens',
+    parameters: z.object({
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+    }),
+  })
+  getTokensStatsGuide({ chain, tokenAddresses }) {
+    return {
+      description: 'Multi-token statistics query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please provide statistical data for tokens [${tokenAddresses}] on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve statistics for multiple tokens including:
+  - Price movements across timeframes (1m, 5m, 15m, 30m, 1h, 4h, 24h)
+  - Buy/sell volumes and counts
+  - Trader activity and trade counts
+  - High/low/open/close prices
+  - Price change ratios
+  
+  Please use the getTokensStats tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
+  @Prompt({
     name: 'token-holders-guide',
     description: 'Guide to fetch holders of a token',
     parameters: z.object({
@@ -254,6 +375,46 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
     };
   }
   
+  @Prompt({
+    name: 'token-holders-multi-guide',
+    description: 'Guide to fetch holders information for multiple wallet addresses of a token',
+    parameters: z.object({
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      tokenAddress: z.string().describe('Token contract address'),
+      walletAddresses: z.string().describe('Comma-separated list of wallet addresses'),
+    }),
+  })
+  getTokenHoldersMultiGuide({ chain, tokenAddress, walletAddresses }) {
+    return {
+      description: 'Multi-wallet holders query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch holders information for token ${tokenAddress} on chain ${chain} for wallets [${walletAddresses}].`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve holders information including:
+  - Wallet address
+  - Amount held
+  - Amount in USD
+  - Percentage of total supply
+  
+  Please use the getTokenHoldersMulti tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+
   @Prompt({
     name: 'token-candles-guide',
     description: 'Guide to fetch token price candles (OHLC data)',
@@ -369,6 +530,46 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
   - Developer team holdings
   
   Please use the getTokenMarketData tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'tokens-market-data-guide',
+    description: 'Guide to fetch market data for multiple tokens',
+    parameters: z.object({
+      chain: z.string().describe(
+        'Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
+      ),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+    }),
+  })
+  getTokensMarketDataGuide({ chain, tokenAddresses }) {
+    return {
+      description: 'Multi-token market data query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch market data for tokens [${tokenAddresses}] on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve market data for multiple tokens including:
+  - Total supply
+  - Market cap (USD & native token)
+  - Top 10 & Top 100 holdings ratios
+  - Number of holders
+  - Price in USD & native token
+  - TVL (Total Value Locked)
+  
+  Please use the getTokensMarketData tool to fetch the actual data.`,
           },
         },
       ],

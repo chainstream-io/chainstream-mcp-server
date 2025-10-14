@@ -81,6 +81,100 @@ export class TokenTool {
   }
 
   @Tool({
+    name: 'getTokens',
+    description: 'Get details of multiple tokens by chain and addresses',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+      sortBy: z.string().optional().describe('Sort field'),
+      sortDirection: z.enum(['ASC', 'DESC']).optional().describe('Sort direction'),
+      filterBy: z.array(
+        z.object({
+          field: z.string().describe('Filter field name'),
+          min: z.string().optional().describe('Minimum value'),
+          max: z.string().optional().describe('Maximum value'),
+        })
+      ).optional().describe('Filter conditions'),
+    }),
+    annotations: {
+      title: 'Multi-Token Detail Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokens({ chain, tokenAddresses, sortBy, sortDirection, filterBy }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const tokensInfo = await dexClient.token.getTokens({
+        chain: chain as SupportedChain,
+        tokenAddresses,
+        sortBy,
+        sortDirection,
+        filterBy,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddresses,
+                sortBy,
+                sortDirection,
+                filterBy,
+                tokensInfo,
+                count: tokensInfo?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get multiple token details',
+                chain,
+                tokenAddresses,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+    
+
+  @Tool({
     name: 'searchTokens',
     description: 'Search tokens by chain and query',
     parameters: z.object({
@@ -229,6 +323,85 @@ export class TokenTool {
   }
 
   @Tool({
+    name: 'getTokensMetadata',
+    description: 'Get detailed metadata for multiple tokens by chain and addresses',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+    }),
+    annotations: {
+      title: 'Multi-Token Metadata Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokensMetadata({ chain, tokenAddresses }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const metadataMap = await dexClient.token.getMetadataMulti({
+        chain: chain as SupportedChain,
+        tokenAddresses,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddresses,
+                metadata: metadataMap,
+                count: Object.keys(metadataMap || {}).length,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get multiple token metadata',
+                chain,
+                tokenAddresses,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @Tool({
     name: 'getTokenLiquidityPools',
     description: 'Get all liquidity pools containing the specified token',
     parameters: z.object({
@@ -370,6 +543,85 @@ export class TokenTool {
   }
   
   @Tool({
+    name: 'getTokensStats',
+    description: 'Get statistics for multiple tokens across multiple timeframes',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+    }),
+    annotations: {
+      title: 'Multi-Token Statistics Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokensStats({ chain, tokenAddresses }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const statsMap = await dexClient.token.getStatsMulti({
+        chain: chain as SupportedChain,
+        tokenAddresses,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddresses,
+                stats: statsMap,
+                count: Object.keys(statsMap || {}).length,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get multiple token statistics',
+                chain,
+                tokenAddresses,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
+  @Tool({
     name: 'getTokenHolders',
     description: 'Get holders of a token by chain and address',
     parameters: z.object({
@@ -438,6 +690,89 @@ export class TokenTool {
       };
     }
   }
+
+  @Tool({
+    name: 'getTokenHoldersMulti',
+    description: 'Get holders information for multiple wallet addresses of a token',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().describe('Token contract address'),
+      walletAddresses: z.string().describe('Comma-separated list of wallet addresses'),
+    }),
+    annotations: {
+      title: 'Multi-Wallet Token Holders Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokenHoldersMulti({ chain, tokenAddress, walletAddresses }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const holders = await dexClient.token.getHoldersMulti({
+        chain: chain as SupportedChain,
+        tokenAddress,
+        walletAddresses,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddress,
+                walletAddresses,
+                holders,
+                count: holders?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get holders information',
+                chain,
+                tokenAddress,
+                walletAddresses,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
 
   @Tool({
     name: 'getTokenCandles',
@@ -680,6 +1015,85 @@ export class TokenTool {
     }
   }
     
+  @Tool({
+    name: 'getTokensMarketData',
+    description: 'Get market data for multiple tokens by chain and addresses',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+    }),
+    annotations: {
+      title: 'Multi-Token Market Data Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTokensMarketData({ chain, tokenAddresses }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const marketDataMap = await dexClient.token.getMarketDataMulti({
+        chain: chain as SupportedChain,
+        tokenAddresses,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                tokenAddresses,
+                marketData: marketDataMap,
+                count: Object.keys(marketDataMap || {}).length,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get multiple token market data',
+                chain,
+                tokenAddresses,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
   @Tool({
     name: 'getTokenPrices',
     description: 'Get historical price data for a token',
