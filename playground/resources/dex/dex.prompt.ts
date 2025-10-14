@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Prompt } from '../../../dist';
 import { z } from 'zod';
+import { Prompt } from '../../../dist';
 
 @Injectable({ scope: Scope.REQUEST })
 export class DexPrompt {
@@ -154,4 +154,5 @@ Let me help you implement this strategy using the appropriate DEX tools.`,
       ],
     };
   }
+  
 }
