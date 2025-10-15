@@ -813,7 +813,7 @@ export class TokenTool {
         chain: chain as SupportedChain,
         tokenAddress,
         resolution,
-        _from: from,
+        from,
         to,
         limit,
       });
@@ -1694,7 +1694,7 @@ export class TokenTool {
   
       const dexClient = new DexClient(accessToken);
   
-      const list = await dexClient.token.getTokenList({
+      const list = await dexClient.token.listToken({
         chain: chain as SupportedChain,
         ...query,
       });

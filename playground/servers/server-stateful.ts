@@ -4,9 +4,6 @@ import { McpModule } from '../../dist';
 import { BlockchainPrompt } from '../resources/blockchain/blockchain.prompt';
 import { BlockchainResource } from '../resources/blockchain/blockchain.resource';
 import { BlockchainTool } from '../resources/blockchain/blockchain.tool';
-import { DefiPrompt } from '../resources/defi/defi.prompt';
-import { DefiResource } from '../resources/defi/defi.resource';
-import { DefiTool } from '../resources/defi/defi.tool';
 import { DexPrompt } from '../resources/dex/dex.prompt';
 import { DexResource } from '../resources/dex/dex.resource';
 import { DexTool } from '../resources/dex/dex.tool';
@@ -69,9 +66,6 @@ import { WalletTool } from '../resources/wallet/wallet.tool';
     BlockchainPrompt,
     BlockchainResource,
     BlockchainTool,
-    DefiPrompt,
-    DefiResource,
-    DefiTool,
     DexpoolPrompt,
     DexpoolResource,
     DexpoolTool,

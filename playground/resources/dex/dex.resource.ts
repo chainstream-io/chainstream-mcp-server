@@ -35,7 +35,7 @@ export class DexResource {
   
       const dexClient = new DexClient(accessToken);
   
-      const dexList = await dexClient.dex.list({
+      const dexList = await dexClient.dex.listDex({
         chains,
         limit,
         dexProgram,
