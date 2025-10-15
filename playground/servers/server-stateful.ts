@@ -2,21 +2,37 @@ import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { randomUUID } from 'crypto';
 import { McpModule } from '../../dist';
+import { BlockchainPrompt } from '../resources/blockchain/blockchain.prompt';
+import { BlockchainResource } from '../resources/blockchain/blockchain.resource';
+import { BlockchainTool } from '../resources/blockchain/blockchain.tool';
+import { DefiPrompt } from '../resources/defi/defi.prompt';
+import { DefiResource } from '../resources/defi/defi.resource';
+import { DefiTool } from '../resources/defi/defi.tool';
+import { DexPrompt } from '../resources/dex/dex.prompt';
+import { DexResource } from '../resources/dex/dex.resource';
+import { DexTool } from '../resources/dex/dex.tool';
+import { DexpoolPrompt } from '../resources/dexpool/dexpool.prompt';
+import { DexpoolResource } from '../resources/dexpool/dexpool.resource';
+import { DexpoolTool } from '../resources/dexpool/dexpool.tool';
+import { RankingPrompt } from '../resources/ranking/ranking.prompt';
 import { RankingResource } from '../resources/ranking/ranking.resource';
 import { RankingTool } from '../resources/ranking/ranking.tool';
-import { RankingPrompt } from '../resources/ranking/ranking.prompt';
+import { RedpacketPrompt } from '../resources/redpacket/redpacket.prompt';
+import { RedpacketResource } from '../resources/redpacket/redpacket.resource';
+import { RedpacketTool } from '../resources/redpacket/redpacket.tool';
+import { TokenPrompt } from '../resources/token/token.prompt';
 import { TokenResource } from '../resources/token/token.resource';
 import { TokenTool } from '../resources/token/token.tool';
-import { TokenPrompt } from '../resources/token/token.prompt';
-import { DexResource } from '../resources/dex/dex.resource';
-import { TransactionResource } from '../resources/transaction/transaction.resource';
-import { DexTool } from '../resources/dex/dex.tool';
-import { TransactionTool } from '../resources/transaction/transaction.tool';
-import { DexPrompt } from '../resources/dex/dex.prompt';
+import { TradePrompt } from '../resources/trade/trade.prompt';
+import { TradeResource } from '../resources/trade/trade.resource';
+import { TradeTool } from '../resources/trade/trade.tool';
 import { TransactionPrompt } from '../resources/transaction/transaction.prompt';
+import { TransactionResource } from '../resources/transaction/transaction.resource';
+import { TransactionTool } from '../resources/transaction/transaction.tool';
+import { WalletPrompt } from '../resources/wallet/wallet.prompt';
 import { WalletResource } from '../resources/wallet/wallet.resource';
 import { WalletTool } from '../resources/wallet/wallet.tool';
-import { WalletPrompt } from '../resources/wallet/wallet.prompt';
+
 
 // Note: The stateful server exposes SSE and Streamable HTTP endpoints.
 @Module({
@@ -50,6 +66,23 @@ import { WalletPrompt } from '../resources/wallet/wallet.prompt';
     WalletResource,
     WalletTool,
     WalletPrompt,
+
+    BlockchainPrompt,
+    BlockchainResource,
+    BlockchainTool,
+    DefiPrompt,
+    DefiResource,
+    DefiTool,
+    DexpoolPrompt,
+    DexpoolResource,
+    DexpoolTool,
+    RedpacketPrompt,
+    RedpacketResource,
+    RedpacketTool,
+    TradePrompt,
+    TradeResource,
+    TradeTool,
+  
   ],
 })
 export class AppModule {}
