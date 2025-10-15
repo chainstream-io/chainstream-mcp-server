@@ -269,4 +269,102 @@ export class TradeTool {
     }
   }
   
+  @Tool({
+    name: 'getTradeActivityList',
+    description: 'Query token activities including trades, liquidity, and red packet events',
+    parameters: z.object({
+      chain: z.enum([
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui',
+      ]),
+      cursor: z.string().optional(),
+      limit: z.string().optional(),
+      direction: z.string().optional(),
+      tokenAddress: z.string().optional(),
+      walletAddress: z.string().optional(),
+      poolAddress: z.string().optional(),
+      beforeTimestamp: z.string().optional(),
+      afterTimestamp: z.string().optional(),
+      beforeBlockHeight: z.string().optional(),
+      afterBlockHeight: z.string().optional(),
+      type: z.string().optional(),
+    }),
+    annotations: {
+      title: 'Trade Activity List Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTradeActivityList(params) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader?.split(' ')[1];
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.trade.getActivities({
+        chain: params.chain,
+        cursor: params.cursor || '',
+        limit: params.limit ? Math.min(Math.max(Number(params.limit), 1), 100) : 20,
+        direction: params.direction || 'next',
+        tokenAddress: params.tokenAddress || undefined,
+        walletAddress: params.walletAddress || undefined,
+        poolAddress: params.poolAddress || undefined,
+        beforeTimestamp: params.beforeTimestamp ? Number(params.beforeTimestamp) : undefined,
+        afterTimestamp: params.afterTimestamp ? Number(params.afterTimestamp) : undefined,
+        beforeBlockHeight: params.beforeBlockHeight ? Number(params.beforeBlockHeight) : undefined,
+        afterBlockHeight: params.afterBlockHeight ? Number(params.afterBlockHeight) : undefined,
+        type: params.type || undefined,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain: params.chain,
+                filters: params,
+                result,
+                count: result?.data?.length ?? 0,
+                pagination: {
+                  total: result?.total,
+                  hasNext: result?.hasNext,
+                  hasPrev: result?.hasPrev,
+                  startCursor: result?.startCursor,
+                  endCursor: result?.endCursor,
+                },
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to fetch token activities',
+                chain: params.chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
 }

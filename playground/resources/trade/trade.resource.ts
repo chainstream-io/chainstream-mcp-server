@@ -1,14 +1,15 @@
 import { DexClient } from '@chainstream-io/sdk';
+import {
+  GetActivitiesChainEnum,
+  GetActivitiesDirectionEnum,
+  GetActivitiesTypeEnum, GetGainersLosersTypeEnum, GetTopTradersSortByEnum, GetTopTradersSortTypeEnum, GetTradesTypeEnum
+} from '@chainstream-io/sdk/openapi';
 import { Injectable, Scope } from '@nestjs/common';
+import { GetTopTradersTimeFrameEnum } from 'node_modules/@chainstream-io/sdk/dist/esm/openapi';
 import { Resource, ResourceTemplate } from '../../../dist';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
-
-// Define supported sort fields
-type SortByField = 'marketCapInUsd' | 'liquidityInUsd' | 'priceInUsd' | 'holderCount' | 'h24VolumeInUsd' | 'h24Transactions' | 'tokenCreatedAt';
-
-type SortByFields = 'marketData.priceInUsd' | 'stats.priceChangeRatioInUsd1m' | 'stats.priceChangeRatioInUsd5m' | 'stats.priceChangeRatioInUsd1h' | 'stats.priceChangeRatioInUsd4h' | 'stats.priceChangeRatioInUsd24h' | 'marketData.marketCapInUsd' | 'marketData.tvlInUsd' | 'marketData.top10HoldingsRatio' | 'marketData.top100HoldingsRatio' | 'marketData.holders' | 'stats.trades1m' | 'stats.trades5m' | 'stats.trades1h' | 'stats.trades4h' | 'stats.trades24h' | 'stats.traders1m' | 'stats.traders5m' | 'stats.traders1h' | 'stats.traders4h' | 'stats.traders24h' | 'stats.volumesInUsd1m' | 'stats.volumesInUsd5m' | 'stats.volumesInUsd1h' | 'stats.volumesInUsd4h' | 'stats.volumesInUsd24h' | 'tokenCreatedAt';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TradeResource {
@@ -53,8 +54,23 @@ export class TradeResource {
             directionParam = undefined;
           }
 
+          // Fix: Convert queryParams.type to correct enum if present
+          let typeParam: GetTradesTypeEnum | undefined = undefined;
+          if (queryParams.type) {
+            if (
+              Object.values(GetTradesTypeEnum).includes(
+                queryParams.type as GetTradesTypeEnum
+              )
+            ) {
+              typeParam = queryParams.type as GetTradesTypeEnum;
+            } else {
+              typeParam = undefined;
+            }
+          }
+
           const result = await dexClient.trade.getTrades({
             ...queryParams,
+            type: typeParam,
             direction: directionParam,
             chain: chain as SupportedChain,
           });
@@ -146,9 +162,9 @@ export class TradeResource {
             {
               chain: chain as SupportedChain,
               tokenAddress,
-              timeFrame,
-              sortType,
-              sortBy,
+              timeFrame: timeFrame as GetTopTradersTimeFrameEnum,
+              sortType: sortType as GetTopTradersSortTypeEnum,
+              sortBy: sortBy as GetTopTradersSortByEnum,
               cursor,
               direction: direction as 'next' | 'prev' | undefined,
               limit,
@@ -239,11 +255,25 @@ export class TradeResource {
 
           // Ensure 'direction' is typed correctly as "next" | "prev" | undefined
           const { direction, ...restQueryParams } = queryParams;
+          // Ensure direction type and type compatibility for API
           const typedDirection = (direction === "next" || direction === "prev") ? direction : undefined;
 
+          // Map the 'type' param to the correct enum or undefined if invalid
+          // Assuming GetGainersLosersTypeEnum = { "1W": "1W", "1D": "1D", ... }
+          // You may need to define the enum or import it if not in scope
+          const allowedTypes = ["1W", "1D", "1H", "1M"];
+          const typedType = allowedTypes.includes(restQueryParams.type)
+            ? restQueryParams.type
+            : undefined;
+
+          // Only pass the fields the API expects.
           const result = await dexClient.trade.getGainersLosers({
             chain: chain as SupportedChain,
-            ...restQueryParams,
+            type: typedType as GetGainersLosersTypeEnum | undefined,
+            sortBy: "PnL", // API accepts only "PnL"
+            sortType: restQueryParams.sortType as GetTopTradersSortTypeEnum,
+            cursor: restQueryParams.cursor,
+            limit: restQueryParams.limit,
             direction: typedDirection,
           });
 
@@ -282,6 +312,112 @@ export class TradeResource {
                 text: JSON.stringify(
                   {
                     error: 'Failed to get gainers/losers',
+                    chain,
+                    message: error.message,
+                    timestamp: new Date().toISOString(),
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        }
+      }
+      
+      @ResourceTemplate({
+        name: 'getTradeActivityList',
+        description: `Query token activities including trades, liquidity, and red packet events.
+      
+      🔐 Authentication Required
+      
+      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v1/trade-chain-activities-get`,
+        mimeType: 'application/json',
+        uriTemplate: 'mcp://dex/trade/activity/list/{chain}?cursor={cursor}&limit={limit}&direction={direction}&tokenAddress={tokenAddress}&walletAddress={walletAddress}&poolAddress={poolAddress}&beforeTimestamp={beforeTimestamp}&afterTimestamp={afterTimestamp}&beforeBlockHeight={beforeBlockHeight}&afterBlockHeight={afterBlockHeight}&type={type}',
+      })
+      async getTradeActivityList(req: Request, { uri, chain }) {
+        try {
+          const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+          if (!accessToken) {
+            throw new Error('Access token is required.');
+          }
+      
+          const url = new URL(uri);
+          const queryParams = {
+            chain: chain as SupportedChain,
+            cursor: url.searchParams.get('cursor') || '',
+            limit: url.searchParams.get('limit') ? Math.min(Math.max(Number(url.searchParams.get('limit')), 1), 100) : 20,
+            direction: url.searchParams.get('direction') || 'next',
+            tokenAddress: url.searchParams.get('tokenAddress') || undefined,
+            walletAddress: url.searchParams.get('walletAddress') || undefined,
+            poolAddress: url.searchParams.get('poolAddress') || undefined,
+            beforeTimestamp: url.searchParams.get('beforeTimestamp') ? Number(url.searchParams.get('beforeTimestamp')) : undefined,
+            afterTimestamp: url.searchParams.get('afterTimestamp') ? Number(url.searchParams.get('afterTimestamp')) : undefined,
+            beforeBlockHeight: url.searchParams.get('beforeBlockHeight') ? Number(url.searchParams.get('beforeBlockHeight')) : undefined,
+            afterBlockHeight: url.searchParams.get('afterBlockHeight') ? Number(url.searchParams.get('afterBlockHeight')) : undefined,
+            type: url.searchParams.get('type') || undefined,
+          };
+      
+          const typedDirection = (queryParams.direction === "next" || queryParams.direction === "prev") ? queryParams.direction : undefined;
+          
+          const typedType = [
+            'BUY', 'SELL', 'LIQUIDITY_INITIALIZE', 'LIQUIDITY_ADD', 'LIQUIDITY_REMOVE',
+            'RED_PACKET_CREATE', 'RED_PACKET_CLAIM', 'RED_PACKET_COMPLETE', 'RED_PACKET_REFUND',
+          ].includes(queryParams.type as string)
+            ? queryParams.type as GetActivitiesTypeEnum
+            : undefined;
+
+          const dexClient = new DexClient(accessToken);
+          const result =  await dexClient.trade.getActivities({
+            chain: chain as GetActivitiesChainEnum,
+            cursor: queryParams.cursor,
+            limit: queryParams.limit,
+            direction: typedDirection,
+            tokenAddress: queryParams.tokenAddress,
+            walletAddress: queryParams.walletAddress,
+            poolAddress: queryParams.poolAddress,
+            beforeTimestamp: queryParams.beforeTimestamp,
+            afterTimestamp: queryParams.afterTimestamp,
+            beforeBlockHeight: queryParams.beforeBlockHeight,
+            afterBlockHeight: queryParams.afterBlockHeight,
+            type: typedType,
+          });
+      
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: 'application/json',
+                text: JSON.stringify(
+                  {
+                    chain,
+                    filters: queryParams,
+                    result,
+                    count: result?.data?.length ?? 0,
+                    pagination: {
+                      total: result?.total,
+                      hasNext: result?.hasNext,
+                      hasPrev: result?.hasPrev,
+                      startCursor: result?.startCursor,
+                      endCursor: result?.endCursor,
+                    },
+                    timestamp: new Date().toISOString(),
+                  },
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: 'application/json',
+                text: JSON.stringify(
+                  {
+                    error: 'Failed to fetch token activities',
                     chain,
                     message: error.message,
                     timestamp: new Date().toISOString(),

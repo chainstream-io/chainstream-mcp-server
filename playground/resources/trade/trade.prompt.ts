@@ -135,4 +135,48 @@ export class TradePrompt {
     };
   }
   
+  @Prompt({
+    name: 'trade-activity-list-guide',
+    description: 'Guide to query token activities including trades, liquidity, and red packet events',
+    parameters: z.object({
+      chain: z.string().describe('Blockchain network (e.g., sol, eth, bsc)'),
+      cursor: z.string().optional().describe('Pagination cursor'),
+      limit: z.string().optional().describe('Number of results per page (1–100)'),
+      direction: z.string().optional().describe('Pagination direction (next or prev)'),
+      tokenAddress: z.string().optional().describe('Token address to query'),
+      walletAddress: z.string().optional().describe('Wallet address to query'),
+      poolAddress: z.string().optional().describe('Pool address to filter'),
+      beforeTimestamp: z.string().optional().describe('Start timestamp (Unix epoch in ms)'),
+      afterTimestamp: z.string().optional().describe('End timestamp (Unix epoch in ms)'),
+      beforeBlockHeight: z.string().optional().describe('Filter before block height'),
+      afterBlockHeight: z.string().optional().describe('Filter after block height'),
+      type: z.string().optional().describe('Activity type (e.g., BUY, SELL, RED_PACKET_CLAIM)'),
+    }),
+  })
+  getTradeActivityListGuide(params) {
+    return {
+      description: 'Trade activity query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch token activities on chain ${params.chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve token-related activities including:
+  - Trades, liquidity events, and red packet actions
+  - Filterable by wallet, token, pool, time, block, and type
+  
+  Please use the getTradeActivityList tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
 }
