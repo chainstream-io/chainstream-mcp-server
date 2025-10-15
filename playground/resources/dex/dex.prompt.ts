@@ -154,5 +154,44 @@ Let me help you implement this strategy using the appropriate DEX tools.`,
       ],
     };
   }
+ 
+  
+  @Prompt({
+    name: 'dex-list-guide',
+    description: 'Guide to fetch list of DEXs on specified blockchains',
+    parameters: z.object({
+      chains: z.string().describe('Comma-separated list of chain names (e.g., "sol,eth,bsc")'),
+      limit: z.string().optional().describe('Number of results per page (as string, optional)'),
+      dexProgram: z.string().optional().describe('DEX program address (optional filter)'),
+    }),
+  })
+  getDexListGuide({ chains, limit, dexProgram }) {
+    return {
+      description: 'DEX list query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch DEX list for chains [${chains.join(', ')}]${dexProgram ? ` with program ${dexProgram}` : ''}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve DEX information including:
+  - Program address
+  - Protocol family
+  - Logo image
+  - Chain name
+  - Pagination metadata (hasNext, hasPrev, cursors, total)
+  
+  Please use the getDexList tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
   
 }

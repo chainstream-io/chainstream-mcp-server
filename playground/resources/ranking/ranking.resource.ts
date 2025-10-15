@@ -1,6 +1,6 @@
+import { DexClient } from '@chainstream-io/sdk';
 import { Injectable, Scope } from '@nestjs/common';
 import { Resource, ResourceTemplate } from '../../../dist';
-import { DexClient } from '@chainstream-io/sdk';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
@@ -148,4 +148,245 @@ export class RankingResource {
       };
     }
   }
+
+  @ResourceTemplate({
+    name: 'getRankingNewTokens',
+    description: `Get the latest 100 tokens on a specific chain.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/ranking/v1/ranking-chain-newTokens-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/ranking/newTokens/{chain}',
+  })
+  async getRankingNewTokens(req: Request, { uri, chain }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getNewTokens({ chain });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get new token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @ResourceTemplate({
+    name: 'getRankingStocksTokens',
+    description: `Get stock-related tokens on a specific chain.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/ranking/v1/ranking-chain-stocks-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/ranking/stocks/{chain}',
+  })
+  async getRankingStocksTokens(req: Request, { uri, chain }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getStocksTokens({ chain });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get stock token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @ResourceTemplate({
+    name: 'getRankingFinalStretchTokens',
+    description: `Get finalStretch tokens on a specific chain.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/ranking/v1/ranking-chain-finalStretch-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/ranking/finalStretch/{chain}',
+  })
+  async getRankingFinalStretchTokens(req: Request, { uri, chain }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getFinalStretchTokens({ chain });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get finalStretch token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getRankingMigratedTokens',
+    description: `Get migrated tokens on a specific chain.
+  
+  🔐 Authentication Required
+  
+  **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/ranking/v1/ranking-chain-migrated-get`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/ranking/migrated/{chain}',
+  })
+  async getRankingMigratedTokens(req: Request, { uri, chain }) {
+    try {
+      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+      if (!accessToken) {
+        throw new Error('Access token is required.');
+      }
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getMigratedTokens({ chain });
+  
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(
+              {
+                error: 'Failed to get migrated token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+    
 }

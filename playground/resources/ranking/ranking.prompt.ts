@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Prompt } from '../../../dist';
 import { z } from 'zod';
+import { Prompt } from '../../../dist';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RankingPrompt {
@@ -44,52 +44,142 @@ Please use the getHotTokens tool to get the latest data.`,
   }
 
   @Prompt({
-    name: 'trending-tokens-guide',
-    description: 'Trending tokens investment guide',
+    name: 'ranking-new-tokens-guide',
+    description: 'Guide to fetch the latest 100 tokens on a specific chain',
     parameters: z.object({
-      userLevel: z.enum(['beginner', 'intermediate', 'advanced']).describe('User experience level'),
-      riskTolerance: z.enum(['low', 'medium', 'high']).describe('Risk tolerance'),
+      chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
     }),
   })
-  getTrendingTokensGuide({ userLevel, riskTolerance }) {
-    const guides = {
-      beginner: {
-        low: 'Focus on mainstream tokens, avoid high volatility assets.',
-        medium: 'Can consider emerging tokens but maintain portfolio diversification.',
-        high: 'Can try trending tokens but recommend small investments.',
-      },
-      intermediate: {
-        low: 'Focus on trending tokens with solid fundamentals.',
-        medium: 'Can participate in hot trends while managing risks.',
-        high: 'Can actively track trends but set stop losses.',
-      },
-      advanced: {
-        low: 'Use technical analysis to select quality trending tokens.',
-        medium: 'Combine fundamental and technical analysis for trends.',
-        high: 'Can participate in high-risk, high-reward trend investments.',
-      },
-    };
-
-    const guide = guides[userLevel][riskTolerance];
-
+  getRankingNewTokensGuide({ chain }) {
     return {
-      description: 'Trending tokens investment guide',
+      description: 'New token ranking query guide',
       messages: [
         {
           role: 'user',
           content: {
             type: 'text',
-            text: `As a ${userLevel} user, my risk tolerance is ${riskTolerance}, please provide trending tokens investment advice.`,
+            text: `Please fetch the latest tokens on chain ${chain}.`,
           },
         },
         {
           role: 'assistant',
           content: {
             type: 'text',
-            text: guide,
+            text: `I will retrieve the latest 100 tokens including:
+  - Name, symbol, address, metadata
+  - Market data and stats
+  - Social media and launchpad info
+  
+  Please use the getRankingNewTokens tool to fetch the actual data.`,
           },
         },
       ],
     };
   }
+  
+  @Prompt({
+    name: 'ranking-stocks-tokens-guide',
+    description: 'Guide to fetch stock-related tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
+    }),
+  })
+  getRankingStocksTokensGuide({ chain }) {
+    return {
+      description: 'Stock token ranking query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch stock-related tokens on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve tokens that represent or track stock assets, including:
+  - Token name, symbol, address
+  - Market data and trading stats
+  - Social media and metadata
+  - Launchpad and protocol info
+  
+  Please use the getRankingStocksTokens tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+
+  @Prompt({
+    name: 'ranking-finalstretch-tokens-guide',
+    description: 'Guide to fetch finalStretch tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
+    }),
+  })
+  getRankingFinalStretchTokensGuide({ chain }) {
+    return {
+      description: 'FinalStretch token ranking query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch finalStretch tokens on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve tokens in their final stretch phase, including:
+  - Token name, symbol, address
+  - Market data and trading stats
+  - Social media and metadata
+  - Launchpad and protocol info
+  
+  Please use the getRankingFinalStretchTokens tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
+  @Prompt({
+    name: 'ranking-migrated-tokens-guide',
+    description: 'Guide to fetch migrated tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
+    }),
+  })
+  getRankingMigratedTokensGuide({ chain }) {
+    return {
+      description: 'Migrated token ranking query guide',
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Please fetch migrated tokens on chain ${chain}.`,
+          },
+        },
+        {
+          role: 'assistant',
+          content: {
+            type: 'text',
+            text: `I will retrieve tokens that have migrated to new protocols or pools, including:
+  - Token name, symbol, address
+  - Migration metadata and destination
+  - Market data and trading stats
+  - Social media and launchpad info
+  
+  Please use the getRankingMigratedTokens tool to fetch the actual data.`,
+          },
+        },
+      ],
+    };
+  }
+  
 }

@@ -18,5 +18,81 @@ type RankingSortByField = 'marketData.priceInUsd' | 'stats.priceChangeRatioInUsd
 export class DexpoolTool {
   constructor(@Inject(REQUEST) private request: Request) {}
 
+  @Tool({
+    name: 'getDexpoolDetail',
+    description: 'Get detailed information about a specific DEX pool',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      poolAddress: z.string().describe('DEX pool address'),
+    }),
+    annotations: {
+      title: 'DEX Pool Detail Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getDexpoolDetail({ chain, poolAddress }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const supportedChains: SupportedChain[] = [
+        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
+        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+      ];
+      if (!supportedChains.includes(chain as SupportedChain)) {
+        throw new Error(`Unsupported chain: ${chain}`);
+      }
+  
+      const dexClient = new DexClient(accessToken);
+  
+      const poolDetail = await dexClient.dexpool.getDexpool({
+        chain: chain as SupportedChain,
+        poolAddress,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                poolAddress,
+                poolDetail,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get DEX pool detail',
+                chain,
+                poolAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
   
 }

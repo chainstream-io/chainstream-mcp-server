@@ -18,5 +18,255 @@ type RankingSortByField = 'marketData.priceInUsd' | 'stats.priceChangeRatioInUsd
 export class TradeTool {
   constructor(@Inject(REQUEST) private request: Request) {}
 
+  @Tool({
+    name: 'getTradeList',
+    description: 'Get a list of transactions on a specific chain with filters and pagination',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+      tokenAddress: z.string().optional(),
+      walletAddress: z.string().optional(),
+      poolAddress: z.string().optional(),
+      type: z.enum(['BUY', 'SELL']).optional(),
+      beforeTimestamp: z.number().optional(),
+      afterTimestamp: z.number().optional(),
+      beforeBlockHeight: z.number().optional(),
+      afterBlockHeight: z.number().optional(),
+      cursor: z.string().optional(),
+      limit: z.number().min(1).max(100).optional(),
+      direction: z.enum(['next', 'prev']).optional(),
+    }),
+    annotations: {
+      title: 'Trade List Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTradeList(params) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.trade.getTrades(params);
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                ...params,
+                result,
+                count: result?.data?.length ?? 0,
+                pagination: {
+                  hasNext: result?.hasNext,
+                  hasPrev: result?.hasPrev,
+                  startCursor: result?.startCursor,
+                  endCursor: result?.endCursor,
+                  total: result?.total,
+                },
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get trade list',
+                ...params,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @Tool({
+    name: 'getTradeTopTraders',
+    description: 'Get top traders for a specific token on a chain',
+    parameters: z.object({
+      chain: z.string(),
+      tokenAddress: z.string(),
+      timeFrame: z.string().optional(),
+      sortType: z.string().optional(),
+      sortBy: z.string().optional(),
+      cursor: z.string().optional(),
+      limit: z.string().optional(),
+      direction: z.enum(['next', 'prev']).optional(),
+    }),
+    annotations: {
+      title: 'Top Trader Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTradeTopTraders(params) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.trade.getTopTraders({
+        chain: params.chain,
+        tokenAddress: params.tokenAddress,
+        timeFrame: params.timeFrame,
+        sortType: params.sortType,
+        sortBy: params.sortBy,
+        cursor: params.cursor,
+        limit: params.limit ? Number(params.limit) : undefined,
+        direction: params.direction,
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                ...params,
+                result,
+                count: result?.data?.length ?? 0,
+                pagination: {
+                  hasNext: result?.hasNext,
+                  hasPrev: result?.hasPrev,
+                  startCursor: result?.startCursor,
+                  endCursor: result?.endCursor,
+                  total: result?.total,
+                },
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get top traders',
+                ...params,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @Tool({
+    name: 'getTradeGainersLosers',
+    description: 'Get top gainers and losers on a specific chain',
+    parameters: z.object({
+      chain: z.string(),
+      type: z.string().optional(),
+      sortBy: z.string().optional(),
+      sortType: z.string().optional(),
+      cursor: z.string().optional(),
+      limit: z.string().optional(),
+      direction: z.enum(['next', 'prev']).optional(),
+    }),
+    annotations: {
+      title: 'Gainers/Losers Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getTradeGainersLosers(params) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.trade.getGainersLosers({
+        chain: params.chain,
+        type: params.type || '1W',
+        sortBy: params.sortBy || 'PnL',
+        sortType: params.sortType || 'desc',
+        cursor: params.cursor || '',
+        limit: params.limit ? Number(params.limit) : 10,
+        direction: params.direction || 'next',
+      });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                ...params,
+                result,
+                count: result?.data?.length ?? 0,
+                pagination: {
+                  hasNext: result?.hasNext,
+                  hasPrev: result?.hasPrev,
+                  startCursor: result?.startCursor,
+                  endCursor: result?.endCursor,
+                  total: result?.total,
+                },
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get gainers/losers',
+                ...params,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
   
 }

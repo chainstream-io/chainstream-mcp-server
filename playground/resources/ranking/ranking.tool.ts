@@ -1,9 +1,9 @@
-import { Injectable, Scope, Inject } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
-import { Tool } from '../../../dist';
 import { DexClient } from '@chainstream-io/sdk';
-import { z } from 'zod';
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import { z } from 'zod';
+import { Tool } from '../../../dist';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
@@ -127,4 +127,258 @@ export class RankingTool {
       };
     }
   }
+
+  @Tool({
+    name: 'getRankingNewTokens',
+    description: 'Get the latest 100 tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+    }),
+    annotations: {
+      title: 'New Token Ranking Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getRankingNewTokens({ chain }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getNewTokens({ chain });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get new token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+
+  @Tool({
+    name: 'getRankingStocksTokens',
+    description: 'Get stock-related tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+    }),
+    annotations: {
+      title: 'Stock Token Ranking Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getRankingStocksTokens({ chain }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getStocksTokens({ chain });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get stock token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @Tool({
+    name: 'getRankingFinalStretchTokens',
+    description: 'Get finalStretch tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+    }),
+    annotations: {
+      title: 'FinalStretch Token Ranking Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getRankingFinalStretchTokens({ chain }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getFinalStretchTokens({ chain });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get finalStretch token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+  @Tool({
+    name: 'getRankingMigratedTokens',
+    description: 'Get migrated tokens on a specific chain',
+    parameters: z.object({
+      chain: z.string().describe('Chain name'),
+    }),
+    annotations: {
+      title: 'Migrated Token Ranking Query Tool',
+      destructiveHint: false,
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  })
+  async getRankingMigratedTokens({ chain }) {
+    try {
+      const authHeader = this.request.headers.authorization;
+      const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
+      if (!accessToken) throw new Error('Access token is required.');
+  
+      const dexClient = new DexClient(accessToken);
+      const result = await dexClient.ranking.getMigratedTokens({ chain });
+  
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: true,
+                chain,
+                result,
+                count: result?.length ?? 0,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get migrated token rankings',
+                chain,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+  
+
 }
