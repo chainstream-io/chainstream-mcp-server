@@ -7,12 +7,12 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { ContextIdFactory, ModuleRef } from '@nestjs/core';
+import { McpRequestWithUser } from 'src/authz';
+import { ZodTypeAny } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { HttpRequest } from '../../interfaces/http-adapter.interface';
 import { McpRegistryService } from '../mcp-registry.service';
 import { McpHandlerBase } from './mcp-handler.base';
-import { ZodTypeAny } from 'zod';
-import { HttpRequest } from '../../interfaces/http-adapter.interface';
-import { McpRequestWithUser } from 'src/authz';
 
 @Injectable({ scope: Scope.REQUEST })
 export class McpToolsHandler extends McpHandlerBase {
@@ -173,7 +173,7 @@ export class McpToolsHandler extends McpHandlerBase {
           }
           // For other errors, return formatted error response
           return {
-            content: [{ type: 'text', text: error.message }],
+            content: [{ type: 'text', text: (error as any).message }],
             isError: true,
           };
         }

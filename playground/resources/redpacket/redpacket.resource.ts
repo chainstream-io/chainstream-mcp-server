@@ -88,7 +88,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to create red packet',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -169,7 +169,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to claim red packet',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -228,7 +228,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to query red packet',
                     id,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -304,7 +304,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to get red packet claim records',
                     id,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -391,7 +391,7 @@ export class RedpacketResource {
                 text: JSON.stringify(
                   {
                     error: 'Failed to get red packet list',
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -468,7 +468,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to get red packet claim records by address',
                     address,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -544,7 +544,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to get red packets by address',
                     address,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -616,7 +616,7 @@ export class RedpacketResource {
                   {
                     error: 'Failed to send red packet transaction',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,

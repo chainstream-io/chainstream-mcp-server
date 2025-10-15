@@ -51,7 +51,7 @@ export class BlockchainResource {
                 },
             ],
             };
-        } catch (error) {
+        } catch (error: unknown) {
             return {
             contents: [
                 {
@@ -60,7 +60,7 @@ export class BlockchainResource {
                 text: JSON.stringify(
                     {
                     error: 'Failed to get blockchain list',
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                     },
                     null,
@@ -120,7 +120,7 @@ export class BlockchainResource {
                 },
             ],
             };
-        } catch (error) {
+        } catch (error: unknown) {
             return {
             contents: [
                 {
@@ -130,7 +130,7 @@ export class BlockchainResource {
                     {
                     error: 'Failed to get latest block information',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                     },
                     null,

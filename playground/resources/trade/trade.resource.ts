@@ -111,7 +111,7 @@ export class TradeResource {
                   {
                     error: 'Failed to get trade list',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -212,7 +212,7 @@ export class TradeResource {
                   {
                     error: 'Failed to get top traders',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -313,7 +313,7 @@ export class TradeResource {
                   {
                     error: 'Failed to get gainers/losers',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,
@@ -419,7 +419,7 @@ export class TradeResource {
                   {
                     error: 'Failed to fetch token activities',
                     chain,
-                    message: error.message,
+                    message: (error as any).message,
                     timestamp: new Date().toISOString(),
                   },
                   null,

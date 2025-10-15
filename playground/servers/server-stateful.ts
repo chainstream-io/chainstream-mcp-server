@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { randomUUID } from 'crypto';
 import { McpModule } from '../../dist';
 import { BlockchainPrompt } from '../resources/blockchain/blockchain.prompt';
 import { BlockchainResource } from '../resources/blockchain/blockchain.resource';

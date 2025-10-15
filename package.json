@@ -88,6 +88,7 @@
     "@chainstream-io/sdk": "^0.1.10",
     "@nestjs/config": "^4.0.2",
     "cookie-parser": "^1.4.7",
+    "event-source-polyfill": "^1.0.31",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^2.0.0",

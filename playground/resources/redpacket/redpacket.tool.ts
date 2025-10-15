@@ -63,7 +63,7 @@ export class RedpacketTool {
         key => createRedPacketInput[key] === undefined && delete createRedPacketInput[key]
       );
   
-      const result = await dexClient.redPacket.create({
+      const result = await dexClient.redPacket.createRedpacket({
         chain: params.chain as SupportedChain,
         createRedPacketInput,
       });
@@ -98,7 +98,7 @@ export class RedpacketTool {
                 error: 'Failed to create red packet',
                 chain: params.chain,
                 creator: params.creator,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -149,7 +149,7 @@ export class RedpacketTool {
         key => claimParams[key] === undefined && delete claimParams[key]
       );
   
-      const result = await dexClient.redPacket.claim(claimParams);
+      const result = await dexClient.redPacket.claimRedpacket(claimParams);
   
       return {
         content: [
@@ -180,7 +180,7 @@ export class RedpacketTool {
                 error: 'Failed to claim red packet',
                 chain: params.chain,
                 claimer: params.claimer,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -213,7 +213,7 @@ export class RedpacketTool {
       if (!accessToken) throw new Error('Access token is required.');
   
       const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.get({ id });
+      const result = await dexClient.redPacket.getRedpacket({ id });
   
       return {
         content: [
@@ -242,7 +242,7 @@ export class RedpacketTool {
                 success: false,
                 error: 'Failed to query red packet',
                 id,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -319,7 +319,7 @@ export class RedpacketTool {
                 success: false,
                 error: 'Failed to get red packet claim records',
                 id: params.id,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -398,7 +398,7 @@ export class RedpacketTool {
                 success: false,
                 error: 'Failed to get red packet list',
                 filters: params,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -475,7 +475,7 @@ export class RedpacketTool {
                 success: false,
                 error: 'Failed to get red packet claim records by address',
                 address: params.address,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -552,7 +552,7 @@ export class RedpacketTool {
                 success: false,
                 error: 'Failed to get red packets by address',
                 address: params.address,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -623,7 +623,7 @@ export class RedpacketTool {
                 success: false,
                 error: 'Failed to send red packet transaction',
                 chain: params.chain,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,

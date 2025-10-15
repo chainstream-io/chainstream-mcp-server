@@ -140,7 +140,7 @@ export class RankingResource {
               error: 'Failed to get hot tokens',
               chain: chain,
               duration: duration,
-              message: error.message,
+              message: (error as any).message,
               timestamp: new Date().toISOString(),
             }, null, 2),
           },
@@ -197,7 +197,7 @@ export class RankingResource {
               {
                 error: 'Failed to get new token rankings',
                 chain,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -257,7 +257,7 @@ export class RankingResource {
               {
                 error: 'Failed to get stock token rankings',
                 chain,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -317,7 +317,7 @@ export class RankingResource {
               {
                 error: 'Failed to get finalStretch token rankings',
                 chain,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
@@ -367,7 +367,7 @@ export class RankingResource {
           },
         ],
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         contents: [
           {
@@ -377,7 +377,7 @@ export class RankingResource {
               {
                 error: 'Failed to get migrated token rankings',
                 chain,
-                message: error.message,
+                message: (error as any).message,
                 timestamp: new Date().toISOString(),
               },
               null,
