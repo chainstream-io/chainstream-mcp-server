@@ -3,7 +3,17 @@ import { Resource, ResourceTemplate } from '../../../dist';
 import { DexClient } from '@chainstream-io/sdk';
 
 // Define supported chain types based on SDK
-type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
+type SupportedChain =
+  | 'sol'
+  | 'base'
+  | 'bsc'
+  | 'polygon'
+  | 'arbitrum'
+  | 'optimism'
+  | 'avalanche'
+  | 'ethereum'
+  | 'zksync'
+  | 'sui';
 
 @Injectable({ scope: Scope.REQUEST })
 export class WalletResource {
@@ -45,13 +55,28 @@ export class WalletResource {
 
       // Validate accessToken
       if (!accessToken) {
-        throw new Error('Access token is required. Please provide a valid JWT token.');
+        throw new Error(
+          'Access token is required. Please provide a valid JWT token.',
+        );
       }
 
       // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      const supportedChains: SupportedChain[] = [
+        'sol',
+        'base',
+        'bsc',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'avalanche',
+        'ethereum',
+        'zksync',
+        'sui',
+      ];
       if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
+        throw new Error(
+          `Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`,
+        );
       }
 
       // Initialize DexClient with provided accessToken
@@ -60,7 +85,7 @@ export class WalletResource {
       // Call SDK wallet.getBalance method with validated chain
       const balanceInfo = await dexClient.wallet.getBalance({
         chain: chain as SupportedChain,
-        walletAddress: walletAddress
+        walletAddress: walletAddress,
       });
 
       return {
@@ -68,12 +93,16 @@ export class WalletResource {
           {
             uri: uri, // Required by MCP protocol - must match the requested URI
             mimeType: 'application/json',
-            text: JSON.stringify({
-              chain: chain,
-              walletAddress: walletAddress,
-              balanceInfo: balanceInfo,
-              timestamp: new Date().toISOString(),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                chain: chain,
+                walletAddress: walletAddress,
+                balanceInfo: balanceInfo,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2,
+            ),
           },
         ],
       };
@@ -83,13 +112,17 @@ export class WalletResource {
           {
             uri: uri, // Required by MCP protocol - must match the requested URI
             mimeType: 'application/json',
-            text: JSON.stringify({
-              error: 'Failed to get wallet balance',
-              chain: chain,
-              walletAddress: walletAddress,
-              message: error.message,
-              timestamp: new Date().toISOString(),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                error: 'Failed to get wallet balance',
+                chain: chain,
+                walletAddress: walletAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2,
+            ),
           },
         ],
       };

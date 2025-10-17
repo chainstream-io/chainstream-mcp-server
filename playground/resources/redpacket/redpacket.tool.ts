@@ -6,13 +6,50 @@ import { z } from 'zod';
 import { Tool } from '../../../dist';
 
 // Define supported chain types based on SDK
-type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
+type SupportedChain =
+  | 'sol'
+  | 'base'
+  | 'bsc'
+  | 'polygon'
+  | 'arbitrum'
+  | 'optimism'
+  | 'avalanche'
+  | 'ethereum'
+  | 'zksync'
+  | 'sui';
 
 // Define supported duration types
 type Duration = '1m' | '5m' | '1h' | '4h' | '24h';
 
 // Define supported sort fields for ranking
-type RankingSortByField = 'marketData.priceInUsd' | 'stats.priceChangeRatioInUsd1m' | 'stats.priceChangeRatioInUsd5m' | 'stats.priceChangeRatioInUsd1h' | 'stats.priceChangeRatioInUsd4h' | 'stats.priceChangeRatioInUsd24h' | 'marketData.marketCapInUsd' | 'marketData.tvlInUsd' | 'marketData.top10HoldingsRatio' | 'marketData.top100HoldingsRatio' | 'marketData.holders' | 'stats.trades1m' | 'stats.trades5m' | 'stats.trades1h' | 'stats.trades4h' | 'stats.trades24h' | 'stats.traders1m' | 'stats.traders5m' | 'stats.traders1h' | 'stats.traders4h' | 'stats.traders24h' | 'stats.volumesInUsd1m' | 'stats.volumesInUsd5m' | 'stats.volumesInUsd1h' | 'stats.volumesInUsd4h' | 'stats.volumesInUsd24h' | 'tokenCreatedAt';
+type RankingSortByField =
+  | 'marketData.priceInUsd'
+  | 'stats.priceChangeRatioInUsd1m'
+  | 'stats.priceChangeRatioInUsd5m'
+  | 'stats.priceChangeRatioInUsd1h'
+  | 'stats.priceChangeRatioInUsd4h'
+  | 'stats.priceChangeRatioInUsd24h'
+  | 'marketData.marketCapInUsd'
+  | 'marketData.tvlInUsd'
+  | 'marketData.top10HoldingsRatio'
+  | 'marketData.top100HoldingsRatio'
+  | 'marketData.holders'
+  | 'stats.trades1m'
+  | 'stats.trades5m'
+  | 'stats.trades1h'
+  | 'stats.trades4h'
+  | 'stats.trades24h'
+  | 'stats.traders1m'
+  | 'stats.traders5m'
+  | 'stats.traders1h'
+  | 'stats.traders4h'
+  | 'stats.traders24h'
+  | 'stats.volumesInUsd1m'
+  | 'stats.volumesInUsd5m'
+  | 'stats.volumesInUsd1h'
+  | 'stats.volumesInUsd4h'
+  | 'stats.volumesInUsd24h'
+  | 'tokenCreatedAt';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RedpacketTool {
@@ -45,9 +82,9 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
-  
+
       const createRedPacketInput: any = {
         creator: params.creator,
         mint: params.mint,
@@ -58,16 +95,18 @@ export class RedpacketTool {
         password: params.password,
         claimAuthority: params.claimAuthority,
       };
-  
+
       Object.keys(createRedPacketInput).forEach(
-        key => createRedPacketInput[key] === undefined && delete createRedPacketInput[key]
+        (key) =>
+          createRedPacketInput[key] === undefined &&
+          delete createRedPacketInput[key],
       );
-  
+
       const result = await dexClient.redPacket.createRedpacket({
         chain: params.chain as SupportedChain,
         createRedPacketInput,
       });
-  
+
       return {
         content: [
           {
@@ -82,7 +121,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -102,14 +141,13 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
 
   @Tool({
     name: 'getRedpacketClaim',
@@ -119,7 +157,10 @@ export class RedpacketTool {
       claimer: z.string().describe('Wallet address of the claimer'),
       packetId: z.string().optional().describe('Red packet ID'),
       shareId: z.string().optional().describe('Red packet share ID'),
-      password: z.string().optional().describe('Password to claim the red packet'),
+      password: z
+        .string()
+        .optional()
+        .describe('Password to claim the red packet'),
     }),
     annotations: {
       title: 'Red Packet Claim Tool',
@@ -134,9 +175,9 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
-  
+
       const claimParams: any = {
         chain: params.chain,
         claimer: params.claimer,
@@ -144,13 +185,13 @@ export class RedpacketTool {
         shareId: params.shareId,
         password: params.password,
       };
-  
+
       Object.keys(claimParams).forEach(
-        key => claimParams[key] === undefined && delete claimParams[key]
+        (key) => claimParams[key] === undefined && delete claimParams[key],
       );
-  
+
       const result = await dexClient.redPacket.claimRedpacket(claimParams);
-  
+
       return {
         content: [
           {
@@ -164,7 +205,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -184,14 +225,14 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
+
   @Tool({
     name: 'getRedpacketGet',
     description: 'Query red packet information by ID',
@@ -211,10 +252,10 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
       const result = await dexClient.redPacket.getRedpacket({ id });
-  
+
       return {
         content: [
           {
@@ -227,7 +268,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -246,14 +287,14 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
+
   @Tool({
     name: 'getRedpacketGetClaims',
     description: 'Query red packet claim records by ID',
@@ -276,15 +317,17 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
       const result = await dexClient.redPacket.getClaims({
         id: params.id,
         cursor: params.cursor || '',
-        limit: params.limit ? Math.min(Math.max(Number(params.limit), 1), 100) : 20,
+        limit: params.limit
+          ? Math.min(Math.max(Number(params.limit), 1), 100)
+          : 20,
         direction: params.direction || 'desc',
       });
-  
+
       return {
         content: [
           {
@@ -304,7 +347,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -323,7 +366,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -354,16 +397,18 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
       const result = await dexClient.redPacket.getRedpackets({
         cursor: params.cursor || '',
-        limit: params.limit ? Math.min(Math.max(Number(params.limit), 1), 100) : 20,
+        limit: params.limit
+          ? Math.min(Math.max(Number(params.limit), 1), 100)
+          : 20,
         direction: params.direction || 'desc',
         creator: params.creator || undefined,
         chain: params.chain || undefined,
       });
-  
+
       return {
         content: [
           {
@@ -383,7 +428,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -402,14 +447,14 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
+
   @Tool({
     name: 'getRedpacketGetClaimsByAddress',
     description: 'Query red packet claim records by wallet address',
@@ -432,15 +477,17 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
       const result = await dexClient.redPacket.getClaimsByAddress({
         address: params.address,
         cursor: params.cursor || '',
-        limit: params.limit ? Math.min(Math.max(Number(params.limit), 1), 100) : 20,
+        limit: params.limit
+          ? Math.min(Math.max(Number(params.limit), 1), 100)
+          : 20,
         direction: params.direction || 'desc',
       });
-  
+
       return {
         content: [
           {
@@ -460,7 +507,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -479,14 +526,14 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
+
   @Tool({
     name: 'getRedpacketGetByAddress',
     description: 'Get the red packets list created by a specific address',
@@ -509,15 +556,17 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
       const result = await dexClient.redPacket.getRedpacketsByAddress({
         address: params.address,
         cursor: params.cursor || '',
-        limit: params.limit ? Math.min(Math.max(Number(params.limit), 1), 100) : 20,
+        limit: params.limit
+          ? Math.min(Math.max(Number(params.limit), 1), 100)
+          : 20,
         direction: params.direction || 'desc',
       });
-  
+
       return {
         content: [
           {
@@ -537,7 +586,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -556,21 +605,29 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
+
   @Tool({
     name: 'getRedpacketSend',
     description: 'Send a signed red packet transaction to the blockchain',
     parameters: z.object({
       chain: z.enum([
-        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
-        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui',
+        'sol',
+        'base',
+        'bsc',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'avalanche',
+        'ethereum',
+        'zksync',
+        'sui',
       ]),
       signedTx: z.string(),
     }),
@@ -587,7 +644,7 @@ export class RedpacketTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
       const result = await dexClient.redPacket.redpacketSend({
         chain: params.chain,
@@ -595,7 +652,7 @@ export class RedpacketTool {
           signedTx: params.signedTx,
         },
       });
-  
+
       return {
         content: [
           {
@@ -608,7 +665,7 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -627,14 +684,11 @@ export class RedpacketTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
-  
 }
-

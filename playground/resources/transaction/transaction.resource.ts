@@ -3,7 +3,17 @@ import { Injectable, Scope } from '@nestjs/common';
 import { Resource, ResourceTemplate } from '../../../dist';
 
 // Define supported chain types based on SDK
-type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
+type SupportedChain =
+  | 'sol'
+  | 'base'
+  | 'bsc'
+  | 'polygon'
+  | 'arbitrum'
+  | 'optimism'
+  | 'avalanche'
+  | 'ethereum'
+  | 'zksync'
+  | 'sui';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TransactionResource {
@@ -41,17 +51,34 @@ export class TransactionResource {
   async sendTransaction(req: any, { uri, chain, to }) {
     try {
       // Get accessToken from request headers - use the same pattern as other resources
-      const accessToken = req.headers?.get?.('Authorization')?.split(' ')[1] || req.headers?.authorization?.split(' ')[1];
+      const accessToken =
+        req.headers?.get?.('Authorization')?.split(' ')[1] ||
+        req.headers?.authorization?.split(' ')[1];
 
       // Validate accessToken
       if (!accessToken) {
-        throw new Error('Access token is required. Please provide a valid JWT token.');
+        throw new Error(
+          'Access token is required. Please provide a valid JWT token.',
+        );
       }
 
       // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      const supportedChains: SupportedChain[] = [
+        'sol',
+        'base',
+        'bsc',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'avalanche',
+        'ethereum',
+        'zksync',
+        'sui',
+      ];
       if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
+        throw new Error(
+          `Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`,
+        );
       }
 
       // Parse query parameters from URL
@@ -59,7 +86,9 @@ export class TransactionResource {
       const signedTx = url.searchParams.get('signedTx');
 
       if (!signedTx) {
-        throw new Error('Signed transaction is required for transaction sending');
+        throw new Error(
+          'Signed transaction is required for transaction sending',
+        );
       }
 
       // Initialize DexClient with provided accessToken
@@ -70,7 +99,7 @@ export class TransactionResource {
         chain: chain as SupportedChain,
         sendTxInput: {
           signedTx: signedTx,
-        }
+        },
       });
 
       return {
@@ -78,13 +107,17 @@ export class TransactionResource {
           {
             uri: uri, // Required by MCP protocol - must match the requested URI
             mimeType: 'application/json',
-            text: JSON.stringify({
-              chain: chain,
-              to,
-              signedTx: signedTx,
-              transactionResult: transactionResult,
-              timestamp: new Date().toISOString(),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                chain: chain,
+                to,
+                signedTx: signedTx,
+                transactionResult: transactionResult,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2,
+            ),
           },
         ],
       };
@@ -94,13 +127,17 @@ export class TransactionResource {
           {
             uri: uri, // Required by MCP protocol - must match the requested URI
             mimeType: 'application/json',
-            text: JSON.stringify({
-              error: 'Failed to send transaction',
-              chain: chain,
-              to,
-              message: error.message,
-              timestamp: new Date().toISOString(),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                error: 'Failed to send transaction',
+                chain: chain,
+                to,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2,
+            ),
           },
         ],
       };

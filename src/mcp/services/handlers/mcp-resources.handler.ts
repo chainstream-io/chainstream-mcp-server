@@ -108,7 +108,7 @@ export class McpResourcesHandler extends McpHandlerBase {
         } catch (error) {
           this.logger.error(error);
           return {
-            contents: [{ uri, mimeType: 'text/plain', text: (error as any).message }],
+            contents: [{ uri, mimeType: 'text/plain', text: error.message }],
             isError: true,
           };
         }

@@ -8,7 +8,8 @@ export class TradePrompt {
 
   @Prompt({
     name: 'trade-list-guide',
-    description: 'Fetch a list of trades on a chain, filterable by token, wallet, pool, type, time, or block height.',
+    description:
+      'Fetch a list of trades on a chain, filterable by token, wallet, pool, type, time, or block height.',
     parameters: z.object({
       chain: z.string(),
       tokenAddress: z.string().optional(),
@@ -52,19 +53,29 @@ export class TradePrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'trade-top-traders-guide',
-    description: 'Retrieve top traders for a token on a chain, with volume, trade count, and sorting options.',
+    description:
+      'Retrieve top traders for a token on a chain, with volume, trade count, and sorting options.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       tokenAddress: z.string().describe('Token address to query top traders'),
-      timeFrame: z.string().optional().describe('Time frame (e.g., 30m, 1h, 24h)'),
+      timeFrame: z
+        .string()
+        .optional()
+        .describe('Time frame (e.g., 30m, 1h, 24h)'),
       sortType: z.string().optional().describe('Sort type (asc or desc)'),
-      sortBy: z.string().optional().describe('Sort field (e.g., volume, trade)'),
+      sortBy: z
+        .string()
+        .optional()
+        .describe('Sort field (e.g., volume, trade)'),
       cursor: z.string().optional().describe('Pagination cursor'),
       limit: z.string().optional().describe('Max number of results (1–10)'),
-      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      direction: z
+        .enum(['next', 'prev'])
+        .optional()
+        .describe('Pagination direction'),
     }),
   })
   getTradeTopTradersGuide(params) {
@@ -93,11 +104,11 @@ export class TradePrompt {
       ],
     };
   }
-  
 
   @Prompt({
     name: 'trade-gainers-losers-guide',
-    description: 'Fetch top gaining and losing tokens on a chain, based on PnL, volume, and timeframe.',
+    description:
+      'Fetch top gaining and losing tokens on a chain, based on PnL, volume, and timeframe.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       type: z.string().optional().describe('Time frame type (e.g., 1W, 24h)'),
@@ -105,7 +116,10 @@ export class TradePrompt {
       sortType: z.string().optional().describe('Sort order (asc or desc)'),
       cursor: z.string().optional().describe('Pagination cursor'),
       limit: z.string().optional().describe('Max number of results (1–10)'),
-      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      direction: z
+        .enum(['next', 'prev'])
+        .optional()
+        .describe('Pagination direction'),
     }),
   })
   getTradeGainersLosersGuide(params) {
@@ -134,23 +148,45 @@ export class TradePrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'trade-activity-list-guide',
-    description: 'Query token-related activities (trades, liquidity, red packets) with multiple filters and pagination.',
+    description:
+      'Query token-related activities (trades, liquidity, red packets) with multiple filters and pagination.',
     parameters: z.object({
       chain: z.string().describe('Blockchain network (e.g., sol, eth, bsc)'),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of results per page (1–100)'),
-      direction: z.string().optional().describe('Pagination direction (next or prev)'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of results per page (1–100)'),
+      direction: z
+        .string()
+        .optional()
+        .describe('Pagination direction (next or prev)'),
       tokenAddress: z.string().optional().describe('Token address to query'),
       walletAddress: z.string().optional().describe('Wallet address to query'),
       poolAddress: z.string().optional().describe('Pool address to filter'),
-      beforeTimestamp: z.string().optional().describe('Start timestamp (Unix epoch in ms)'),
-      afterTimestamp: z.string().optional().describe('End timestamp (Unix epoch in ms)'),
-      beforeBlockHeight: z.string().optional().describe('Filter before block height'),
-      afterBlockHeight: z.string().optional().describe('Filter after block height'),
-      type: z.string().optional().describe('Activity type (e.g., BUY, SELL, RED_PACKET_CLAIM)'),
+      beforeTimestamp: z
+        .string()
+        .optional()
+        .describe('Start timestamp (Unix epoch in ms)'),
+      afterTimestamp: z
+        .string()
+        .optional()
+        .describe('End timestamp (Unix epoch in ms)'),
+      beforeBlockHeight: z
+        .string()
+        .optional()
+        .describe('Filter before block height'),
+      afterBlockHeight: z
+        .string()
+        .optional()
+        .describe('Filter after block height'),
+      type: z
+        .string()
+        .optional()
+        .describe('Activity type (e.g., BUY, SELL, RED_PACKET_CLAIM)'),
     }),
   })
   getTradeActivityListGuide(params) {
@@ -178,5 +214,4 @@ export class TradePrompt {
       ],
     };
   }
-  
 }

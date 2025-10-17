@@ -32,7 +32,6 @@ import { WalletPrompt } from '../resources/wallet/wallet.prompt';
 import { WalletResource } from '../resources/wallet/wallet.resource';
 import { WalletTool } from '../resources/wallet/wallet.tool';
 
-
 // Note: The stateful server exposes SSE and Streamable HTTP endpoints.
 @Module({
   imports: [

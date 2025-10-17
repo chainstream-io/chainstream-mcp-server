@@ -8,11 +8,14 @@ export class DexpoolPrompt {
 
   @Prompt({
     name: 'dexpool-detail-guide',
-    description: 'Retrieve detailed information for a specific DEX pool, including token pair, protocol, TVL, and chain data.',
+    description:
+      'Retrieve detailed information for a specific DEX pool, including token pair, protocol, TVL, and chain data.',
     parameters: z.object({
-      chain: z.string().describe(
-        'Chain name (supported: sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported: sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)',
+        ),
       poolAddress: z.string().describe('DEX pool address'),
     }),
   })
@@ -44,5 +47,4 @@ export class DexpoolPrompt {
       ],
     };
   }
-  
 }

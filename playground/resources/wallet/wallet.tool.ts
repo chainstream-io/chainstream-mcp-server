@@ -6,7 +6,17 @@ import { z } from 'zod';
 import { Tool } from '../../../dist';
 
 // Define supported chain types based on SDK
-type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
+type SupportedChain =
+  | 'sol'
+  | 'base'
+  | 'bsc'
+  | 'polygon'
+  | 'arbitrum'
+  | 'optimism'
+  | 'avalanche'
+  | 'ethereum'
+  | 'zksync'
+  | 'sui';
 
 @Injectable({ scope: Scope.REQUEST })
 export class WalletTool {
@@ -16,7 +26,11 @@ export class WalletTool {
     name: 'getBalance',
     description: 'Get wallet balance on a specific chain',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
       walletAddress: z.string().describe('Wallet address to check balance'),
     }),
     annotations: {
@@ -35,13 +49,28 @@ export class WalletTool {
 
       // Validate accessToken
       if (!accessToken) {
-        throw new Error('Access token is required. Please provide a valid JWT token.');
+        throw new Error(
+          'Access token is required. Please provide a valid JWT token.',
+        );
       }
 
       // Validate chain parameter
-      const supportedChains: SupportedChain[] = ['sol', 'base', 'bsc', 'polygon', 'arbitrum', 'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'];
+      const supportedChains: SupportedChain[] = [
+        'sol',
+        'base',
+        'bsc',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'avalanche',
+        'ethereum',
+        'zksync',
+        'sui',
+      ];
       if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`);
+        throw new Error(
+          `Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`,
+        );
       }
 
       // Initialize DexClient with provided accessToken
@@ -50,20 +79,24 @@ export class WalletTool {
       // Call SDK wallet.getBalance method
       const balanceInfo = await dexClient.wallet.getBalance({
         chain: chain as SupportedChain,
-        walletAddress: walletAddress
+        walletAddress: walletAddress,
       });
 
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              success: true,
-              chain: chain,
-              walletAddress: walletAddress,
-              balanceInfo: balanceInfo,
-              timestamp: new Date().toISOString(),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                success: true,
+                chain: chain,
+                walletAddress: walletAddress,
+                balanceInfo: balanceInfo,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2,
+            ),
           },
         ],
       };
@@ -72,14 +105,18 @@ export class WalletTool {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              success: false,
-              error: 'Failed to get wallet balance',
-              chain: chain,
-              walletAddress: walletAddress,
-              message: error.message,
-              timestamp: new Date().toISOString(),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                success: false,
+                error: 'Failed to get wallet balance',
+                chain: chain,
+                walletAddress: walletAddress,
+                message: error.message,
+                timestamp: new Date().toISOString(),
+              },
+              null,
+              2,
+            ),
           },
         ],
       };

@@ -6,7 +6,17 @@ import { z } from 'zod';
 import { Tool } from '../../../dist';
 
 // Define supported chain types based on SDK
-type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
+type SupportedChain =
+  | 'sol'
+  | 'base'
+  | 'bsc'
+  | 'polygon'
+  | 'arbitrum'
+  | 'optimism'
+  | 'avalanche'
+  | 'ethereum'
+  | 'zksync'
+  | 'sui';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlockchainTool {
@@ -29,11 +39,11 @@ export class BlockchainTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const dexClient = new DexClient(accessToken);
-  
+
       const blockchains = await dexClient.blockchain.getSupportedBlockchains();
-  
+
       return {
         content: [
           {
@@ -46,7 +56,7 @@ export class BlockchainTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -64,7 +74,7 @@ export class BlockchainTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -72,8 +82,7 @@ export class BlockchainTool {
     }
   }
 
-
-@Tool({
+  @Tool({
     name: 'getBlockchainLatestBlock',
     description: 'Get the latest block information for a specific blockchain',
     parameters: z.object({
@@ -92,21 +101,29 @@ export class BlockchainTool {
       const authHeader = this.request.headers.authorization;
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
-  
+
       const supportedChains: SupportedChain[] = [
-        'sol', 'base', 'bsc', 'polygon', 'arbitrum',
-        'optimism', 'avalanche', 'ethereum', 'zksync', 'sui'
+        'sol',
+        'base',
+        'bsc',
+        'polygon',
+        'arbitrum',
+        'optimism',
+        'avalanche',
+        'ethereum',
+        'zksync',
+        'sui',
       ];
       if (!supportedChains.includes(chain as SupportedChain)) {
         throw new Error(`Unsupported chain: ${chain}`);
       }
-  
+
       const dexClient = new DexClient(accessToken);
-  
+
       const latestBlock = await dexClient.blockchain.getLatestBlock({
         chain: chain as SupportedChain,
       });
-  
+
       return {
         content: [
           {
@@ -119,7 +136,7 @@ export class BlockchainTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
@@ -138,12 +155,11 @@ export class BlockchainTool {
                 timestamp: new Date().toISOString(),
               },
               null,
-              2
+              2,
             ),
           },
         ],
       };
     }
   }
-  
 }

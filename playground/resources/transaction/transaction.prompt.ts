@@ -6,9 +6,14 @@ import { Prompt } from '../../../dist';
 export class TransactionPrompt {
   @Prompt({
     name: 'getTransactionGuide',
-    description: 'Provide a step-by-step guide for sending a transaction on a chain, including gas estimation and security tips.',
+    description:
+      'Provide a step-by-step guide for sending a transaction on a chain, including gas estimation and security tips.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
       to: z.string().describe('Recipient address'),
       value: z.string().describe('Amount to send (in wei/smallest unit)'),
     }),

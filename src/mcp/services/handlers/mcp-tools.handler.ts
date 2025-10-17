@@ -173,7 +173,7 @@ export class McpToolsHandler extends McpHandlerBase {
           }
           // For other errors, return formatted error response
           return {
-            content: [{ type: 'text', text: (error as any).message }],
+            content: [{ type: 'text', text: error.message }],
             isError: true,
           };
         }

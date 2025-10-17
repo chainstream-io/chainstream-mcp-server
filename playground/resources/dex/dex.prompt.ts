@@ -155,15 +155,23 @@ Let me help you implement this strategy using the appropriate DEX tools.`,
       ],
     };
   }*/
- 
-  
+
   @Prompt({
     name: 'dex-list-guide',
-    description: 'Fetch a paginated list of DEX protocols on specified chains, with program address, family, and metadata.',
+    description:
+      'Fetch a paginated list of DEX protocols on specified chains, with program address, family, and metadata.',
     parameters: z.object({
-      chains: z.string().describe('Comma-separated list of chain names (e.g., "sol,eth,bsc")'),
-      limit: z.string().optional().describe('Number of results per page (as string, optional)'),
-      dexProgram: z.string().optional().describe('DEX program address (optional filter)'),
+      chains: z
+        .string()
+        .describe('Comma-separated list of chain names (e.g., "sol,eth,bsc")'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of results per page (as string, optional)'),
+      dexProgram: z
+        .string()
+        .optional()
+        .describe('DEX program address (optional filter)'),
     }),
   })
   getDexListGuide({ chains, limit, dexProgram }) {
@@ -194,5 +202,4 @@ Let me help you implement this strategy using the appropriate DEX tools.`,
       ],
     };
   }
-  
 }

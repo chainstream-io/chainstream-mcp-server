@@ -100,7 +100,7 @@ export class McpPromptsHandler extends McpHandlerBase {
         } catch (error) {
           this.logger.error(error);
           return {
-            contents: [{ mimeType: 'text/plain', text: (error as any).message }],
+            contents: [{ mimeType: 'text/plain', text: error.message }],
             isError: true,
           };
         }

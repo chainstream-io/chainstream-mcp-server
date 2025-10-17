@@ -8,7 +8,8 @@ export class RedpacketPrompt {
 
   @Prompt({
     name: 'redpacket-create-guide',
-    description: 'Create a red packet transaction on a specific chain, including creator, mint, claims, and optional settings.',
+    description:
+      'Create a red packet transaction on a specific chain, including creator, mint, claims, and optional settings.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       creator: z.string().describe('Wallet address of the creator'),
@@ -18,7 +19,10 @@ export class RedpacketPrompt {
       fixedAmount: z.string().optional().describe('Fixed amount per claim'),
       memo: z.string().optional().describe('Memo message'),
       password: z.string().optional().describe('Password to claim'),
-      claimAuthority: z.string().optional().describe('Authority address to claim'),
+      claimAuthority: z
+        .string()
+        .optional()
+        .describe('Authority address to claim'),
     }),
   })
   getRedpacketCreateGuide(params) {
@@ -47,17 +51,20 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
 
   @Prompt({
     name: 'redpacket-claim-guide',
-    description: 'Claim a red packet on a specific chain using claimer address, packet ID, and optional password.',
+    description:
+      'Claim a red packet on a specific chain using claimer address, packet ID, and optional password.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       claimer: z.string().describe('Wallet address of the claimer'),
       packetId: z.string().optional().describe('Red packet ID'),
       shareId: z.string().optional().describe('Red packet share ID'),
-      password: z.string().optional().describe('Password to claim the red packet'),
+      password: z
+        .string()
+        .optional()
+        .describe('Password to claim the red packet'),
     }),
   })
   getRedpacketClaimGuide(params) {
@@ -86,10 +93,11 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'redpacket-get-guide',
-    description: 'Query detailed information of a red packet by its ID, including creator, mint, amount, and status.',
+    description:
+      'Query detailed information of a red packet by its ID, including creator, mint, amount, and status.',
     parameters: z.object({
       id: z.string().describe('Red packet ID'),
     }),
@@ -120,14 +128,18 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'redpacket-get-claims-guide',
-    description: 'Fetch claim records of a red packet by ID, with pagination and sorting options.',
+    description:
+      'Fetch claim records of a red packet by ID, with pagination and sorting options.',
     parameters: z.object({
       id: z.string().describe('Red packet ID'),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of records per page (1–100)'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of records per page (1–100)'),
       direction: z.string().optional().describe('Sort direction (asc or desc)'),
     }),
   })
@@ -156,16 +168,23 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'redpacket-get-list-guide',
-    description: 'Retrieve a list of red packets with optional filters (creator, chain) and pagination.',
+    description:
+      'Retrieve a list of red packets with optional filters (creator, chain) and pagination.',
     parameters: z.object({
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of records per page (1–100)'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of records per page (1–100)'),
       direction: z.string().optional().describe('Sort direction (asc or desc)'),
       creator: z.string().optional().describe('Creator wallet address'),
-      chain: z.string().optional().describe('Blockchain network (e.g., sol, eth, bsc)'),
+      chain: z
+        .string()
+        .optional()
+        .describe('Blockchain network (e.g., sol, eth, bsc)'),
     }),
   })
   getRedpacketGetListGuide(params) {
@@ -194,14 +213,18 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'redpacket-get-claims-by-address-guide',
-    description: 'Query all red packet claim records by a specific wallet address, with pagination.',
+    description:
+      'Query all red packet claim records by a specific wallet address, with pagination.',
     parameters: z.object({
       address: z.string().describe('Claimer wallet address'),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of records per page (1–100)'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of records per page (1–100)'),
       direction: z.string().optional().describe('Sort direction (asc or desc)'),
     }),
   })
@@ -230,14 +253,18 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'redpacket-get-by-address-guide',
-    description: 'Fetch red packets created by a specific wallet address, with pagination and metadata.',
+    description:
+      'Fetch red packets created by a specific wallet address, with pagination and metadata.',
     parameters: z.object({
       address: z.string().describe('Creator wallet address'),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of records per page (1–100)'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of records per page (1–100)'),
       direction: z.string().optional().describe('Sort direction (asc or desc)'),
     }),
   })
@@ -267,10 +294,11 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
+
   @Prompt({
     name: 'redpacket-send-guide',
-    description: 'Send a signed red packet transaction to the blockchain network.',
+    description:
+      'Send a signed red packet transaction to the blockchain network.',
     parameters: z.object({
       chain: z.string().describe('Blockchain network (e.g., sol, eth, bsc)'),
       signedTx: z.string().describe('Signed transaction hash'),
@@ -299,5 +327,4 @@ export class RedpacketPrompt {
       ],
     };
   }
-  
 }

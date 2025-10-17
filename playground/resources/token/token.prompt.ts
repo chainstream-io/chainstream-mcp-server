@@ -8,10 +8,15 @@ export class TokenPrompt {
 
   @Prompt({
     name: 'token-research-guide',
-    description: 'Analyze a single token’s fundamentals, market data, and investment outlook.',
+    description:
+      'Analyze a single token’s fundamentals, market data, and investment outlook.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenResearchGuide({ tokenAddress, chain }) {
@@ -46,12 +51,25 @@ Please use the getToken tool to get detailed information.`,
 
   @Prompt({
     name: 'tokens-research-guide',
-    description: 'Compare multiple tokens on a chain, including fundamentals, market data, and trading stats.',
+    description:
+      'Compare multiple tokens on a chain, including fundamentals, market data, and trading stats.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
-      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
-      sortBy: z.string().optional().describe('Sort field, e.g. marketData.marketCapInUsd'),
-      sortDirection: z.enum(['ASC', 'DESC']).optional().describe('Sort direction'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
+      tokenAddresses: z
+        .string()
+        .describe('Comma-separated list of token addresses'),
+      sortBy: z
+        .string()
+        .optional()
+        .describe('Sort field, e.g. marketData.marketCapInUsd'),
+      sortDirection: z
+        .enum(['ASC', 'DESC'])
+        .optional()
+        .describe('Sort direction'),
     }),
   })
   getTokensResearchGuide({ chain, tokenAddresses, sortBy, sortDirection }) {
@@ -81,41 +99,49 @@ Please use the getToken tool to get detailed information.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-search-strategy',
-    description: 'Generate token search strategies based on search type and investment goals.',
+    description:
+      'Generate token search strategies based on search type and investment goals.',
     parameters: z.object({
-      searchType: z.enum(['by-name', 'by-symbol', 'by-category', 'trending']).describe('Search type'),
-      investmentGoal: z.enum(['short-term', 'long-term', 'yield-farming', 'governance']).describe('Investment goal'),
+      searchType: z
+        .enum(['by-name', 'by-symbol', 'by-category', 'trending'])
+        .describe('Search type'),
+      investmentGoal: z
+        .enum(['short-term', 'long-term', 'yield-farming', 'governance'])
+        .describe('Investment goal'),
     }),
   })
   getTokenSearchStrategy({ searchType, investmentGoal }) {
     const strategies = {
       'by-name': {
-        'short-term': 'Search tokens by name suitable for short-term trading, focus on liquidity and volatility.',
-        'long-term': 'Search tokens by name with long-term value, focus on fundamentals.',
-        'yield-farming': 'Search tokens by name suitable for farming, focus on yield rates.',
-        'governance': 'Search governance tokens by name, focus on voting rights and community activity.',
+        'short-term':
+          'Search tokens by name suitable for short-term trading, focus on liquidity and volatility.',
+        'long-term':
+          'Search tokens by name with long-term value, focus on fundamentals.',
+        'yield-farming':
+          'Search tokens by name suitable for farming, focus on yield rates.',
+        governance:
+          'Search governance tokens by name, focus on voting rights and community activity.',
       },
       'by-symbol': {
         'short-term': 'Search popular trading tokens by symbol.',
         'long-term': 'Search well-known project tokens by symbol.',
         'yield-farming': 'Search farming tokens by symbol.',
-        'governance': 'Search governance tokens by symbol.',
+        governance: 'Search governance tokens by symbol.',
       },
       'by-category': {
         'short-term': 'Search hot sector tokens by category.',
         'long-term': 'Search promising sector tokens by category.',
         'yield-farming': 'Search farming sector tokens by category.',
-        'governance': 'Search governance sector tokens by category.',
+        governance: 'Search governance sector tokens by category.',
       },
-      'trending': {
+      trending: {
         'short-term': 'Focus on short-term opportunities in trending tokens.',
         'long-term': 'Analyze long-term value of trending tokens.',
         'yield-farming': 'Look for farming opportunities in trends.',
-        'governance': 'Focus on governance tokens in trends.',
+        governance: 'Focus on governance tokens in trends.',
       },
     };
 
@@ -145,10 +171,15 @@ Please use the getToken tool to get detailed information.`,
   // 获取 Token Metadata
   @Prompt({
     name: 'token-metadata-guide',
-    description: 'Fetch detailed on-chain metadata for a token, including name, symbol, decimals, creators, and social linkssss.',
+    description:
+      'Fetch detailed on-chain metadata for a token, including name, symbol, decimals, creators, and social linkssss.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenMetadataGuide({ tokenAddress, chain }) {
@@ -184,12 +215,17 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
 
   @Prompt({
     name: 'tokens-metadata-guide',
-    description: 'Retrieve metadata for multiple tokens, including identifiers, creators, and social information.',
+    description:
+      'Retrieve metadata for multiple tokens, including identifiers, creators, and social information.',
     parameters: z.object({
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
-      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
+      tokenAddresses: z
+        .string()
+        .describe('Comma-separated list of token addresses'),
     }),
   })
   getTokensMetadataGuide({ chain, tokenAddresses }) {
@@ -222,14 +258,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-liquidity-pools',
-    description: 'List all liquidity pools that include a given token, with pool details and TVL.',
+    description:
+      'List all liquidity pools that include a given token, with pool details and TVL.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenLiquidityPools({ tokenAddress, chain }) {
@@ -260,14 +300,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-stats-guide',
-    description: 'Retrieve trading statistics for a token, including price, volume, and trader activity.',
+    description:
+      'Retrieve trading statistics for a token, including price, volume, and trader activity.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenStatsGuide({ tokenAddress, chain }) {
@@ -298,15 +342,20 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'tokens-stats-guide',
-    description: 'Fetch comparative trading statistics for multiple tokens on a chain.',
+    description:
+      'Fetch comparative trading statistics for multiple tokens on a chain.',
     parameters: z.object({
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
-      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
+      tokenAddresses: z
+        .string()
+        .describe('Comma-separated list of token addresses'),
     }),
   })
   getTokensStatsGuide({ chain, tokenAddresses }) {
@@ -337,14 +386,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-holders-guide',
-    description: 'List all holders of a token, including wallet addresses, balances, and supply share.',
+    description:
+      'List all holders of a token, including wallet addresses, balances, and supply share.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenHoldersGuide({ tokenAddress, chain }) {
@@ -374,16 +427,20 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'token-holders-multi-guide',
     description: 'Fetch token holding details for specific wallet addresses.',
     parameters: z.object({
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
       tokenAddress: z.string().describe('Token contract address'),
-      walletAddresses: z.string().describe('Comma-separated list of wallet addresses'),
+      walletAddresses: z
+        .string()
+        .describe('Comma-separated list of wallet addresses'),
     }),
   })
   getTokenHoldersMultiGuide({ chain, tokenAddress, walletAddresses }) {
@@ -413,17 +470,29 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-candles-guide',
-    description: 'Fetch OHLC candlestick data for a token at a given resolution.',
+    description:
+      'Fetch OHLC candlestick data for a token at a given resolution.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
-      resolution: z.enum(['1s', '15s', '30s', '1m', '5m', '15m', '1h', '4h', '12h', '1d']).describe('Time resolution for candle data'),
-      from: z.string().optional().describe('Start timestamp (Unix epoch in milliseconds)'),
-      to: z.string().optional().describe('End timestamp (Unix epoch in milliseconds)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
+      resolution: z
+        .enum(['1s', '15s', '30s', '1m', '5m', '15m', '1h', '4h', '12h', '1d'])
+        .describe('Time resolution for candle data'),
+      from: z
+        .string()
+        .optional()
+        .describe('Start timestamp (Unix epoch in milliseconds)'),
+      to: z
+        .string()
+        .optional()
+        .describe('End timestamp (Unix epoch in milliseconds)'),
       limit: z.string().optional().describe('Number of results per page'),
     }),
   })
@@ -456,15 +525,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'token-top-holders-guide',
-    description: 'Retrieve the top 20 token holders ranked by balance and supply share.',
+    description:
+      'Retrieve the top 20 token holders ranked by balance and supply share.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenTopHoldersGuide({ tokenAddress, chain }) {
@@ -494,15 +566,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'token-market-data-guide',
-    description: 'Fetch market metrics for a token, including supply, market cap, holders, and TVL.',
+    description:
+      'Fetch market metrics for a token, including supply, market cap, holders, and TVL.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenMarketDataGuide({ tokenAddress, chain }) {
@@ -535,15 +610,20 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'tokens-market-data-guide',
-    description: 'Retrieve market metrics for multiple tokens, including supply, cap, and holder ratios.',
+    description:
+      'Retrieve market metrics for multiple tokens, including supply, cap, and holder ratios.',
     parameters: z.object({
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
-      tokenAddresses: z.string().describe('Comma-separated list of token addresses'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
+      tokenAddresses: z
+        .string()
+        .describe('Comma-separated list of token addresses'),
     }),
   })
   getTokensMarketDataGuide({ chain, tokenAddresses }) {
@@ -575,19 +655,27 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-prices-guide',
-    description: 'Fetch historical price data for a token with pagination support.',
+    description:
+      'Fetch historical price data for a token with pagination support.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of results per page (1-100)'),
-      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of results per page (1-100)'),
+      direction: z
+        .enum(['next', 'prev'])
+        .optional()
+        .describe('Pagination direction'),
     }),
   })
   getTokenPricesGuide({ tokenAddress, chain, cursor, limit, direction }) {
@@ -617,16 +705,21 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
- 
+
   @Prompt({
     name: 'token-price-by-time-guide',
-    description: 'Retrieve token price at a specific timestamp in USD and native token.',
+    description:
+      'Retrieve token price at a specific timestamp in USD and native token.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
-      timestamp: z.string().describe('Timestamp for price query (Unix epoch in seconds)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
+      timestamp: z
+        .string()
+        .describe('Timestamp for price query (Unix epoch in seconds)'),
     }),
   })
   getTokenPriceByTimeGuide({ tokenAddress, chain, timestamp }) {
@@ -655,15 +748,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'token-creation-guide',
-    description: 'Retrieve token creation details, including block, transaction, and timestamp.',
+    description:
+      'Retrieve token creation details, including block, transaction, and timestamp.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenCreationGuide({ tokenAddress, chain }) {
@@ -693,22 +789,40 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'token-mint-burn-guide',
-    description: 'Fetch mint and burn operations for a token, with block and transaction details.',
+    description:
+      'Fetch mint and burn operations for a token, with block and transaction details.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of results per page (1-100)'),
-      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
-      type: z.enum(['all', 'mint', 'burn']).describe('Type of operation to filter'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of results per page (1-100)'),
+      direction: z
+        .enum(['next', 'prev'])
+        .optional()
+        .describe('Pagination direction'),
+      type: z
+        .enum(['all', 'mint', 'burn'])
+        .describe('Type of operation to filter'),
     }),
   })
-  getTokenMintBurnGuide({ tokenAddress, chain, cursor, limit, direction, type }) {
+  getTokenMintBurnGuide({
+    tokenAddress,
+    chain,
+    cursor,
+    limit,
+    direction,
+    type,
+  }) {
     return {
       description: 'Token mint and burn query guide',
       messages: [
@@ -735,15 +849,18 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
+
   @Prompt({
     name: 'token-security-guide',
-    description: 'Retrieve token security attributes, including authorities, permissions, and liquidity risks.',
+    description:
+      'Retrieve token security attributes, including authorities, permissions, and liquidity risks.',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
-      chain: z.string().describe(
-        'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'
-      ),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)',
+        ),
     }),
   })
   getTokenSecurityGuide({ tokenAddress, chain }) {
@@ -774,21 +891,35 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 
   @Prompt({
     name: 'token-list-filtered-guide',
-    description: 'Fetch a filtered and sorted list of tokens on a chain, with pagination and range filters.',
+    description:
+      'Fetch a filtered and sorted list of tokens on a chain, with pagination and range filters.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)'),
+      chain: z
+        .string()
+        .describe(
+          'Chain name (sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)',
+        ),
       cursor: z.string().optional().describe('Pagination cursor'),
-      limit: z.string().optional().describe('Number of results per page (1-100)'),
-      direction: z.enum(['next', 'prev']).optional().describe('Pagination direction'),
+      limit: z
+        .string()
+        .optional()
+        .describe('Number of results per page (1-100)'),
+      direction: z
+        .enum(['next', 'prev'])
+        .optional()
+        .describe('Pagination direction'),
       sort: z.enum(['asc', 'desc']).optional().describe('Sort direction'),
-      sortBy: z.string().optional().describe('Sort by field, e.g. h24VolumeInUsd'),
+      sortBy: z
+        .string()
+        .optional()
+        .describe('Sort by field, e.g. h24VolumeInUsd'),
     }),
   })
-  getTokenListFilteredGuide({ chain, cursor, limit, direction, sort, sortBy }) { //TODO
+  getTokenListFilteredGuide({ chain, cursor, limit, direction, sort, sortBy }) {
+    //TODO
     return {
       description: 'Token list (filtered) query guide',
       messages: [
@@ -814,5 +945,4 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
       ],
     };
   }
-  
 }
