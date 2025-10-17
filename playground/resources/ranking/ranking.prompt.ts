@@ -10,7 +10,7 @@ export class RankingPrompt {
     name: 'hot-tokens-analysis',
     description: 'Analyze trending tokens on a chain within a timeframe, covering price, volume, sentiment, risks, and investment tips.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       timeframe: z.string().describe('Time range'),
     }),
   })

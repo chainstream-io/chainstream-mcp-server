@@ -1,9 +1,9 @@
-import { Injectable, Scope, Inject } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
-import { Tool } from '../../../dist';
 import { DexClient } from '@chainstream-io/sdk';
-import { z } from 'zod';
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
+import { z } from 'zod';
+import { Tool } from '../../../dist';
 
 // Define supported chain types based on SDK
 type SupportedChain = 'sol' | 'base' | 'bsc' | 'polygon' | 'arbitrum' | 'optimism' | 'avalanche' | 'ethereum' | 'zksync' | 'sui';
@@ -16,7 +16,7 @@ export class WalletTool {
     name: 'getBalance',
     description: 'Get wallet balance on a specific chain',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       walletAddress: z.string().describe('Wallet address to check balance'),
     }),
     annotations: {

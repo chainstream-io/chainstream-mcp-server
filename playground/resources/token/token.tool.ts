@@ -19,7 +19,7 @@ export class TokenTool {
     name: 'getToken',
     description: 'Get token information by chain and address',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       tokenAddress: z.string().describe('Token contract address'),
     }),
     annotations: {
@@ -178,7 +178,7 @@ export class TokenTool {
     name: 'searchTokens',
     description: 'Search tokens by chain and query',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       query: z.string().min(1).describe('Search keyword'),
       category: z.string().optional().describe('Token category (optional)'),
       limit: z.number().min(1).max(100).optional().describe('Result limit (1-100)'),
@@ -261,7 +261,7 @@ export class TokenTool {
     name: 'getTokenMetadata',
     description: 'Get detailed token metadata by chain and address',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       tokenAddress: z.string().describe('Token contract address'),
     }),
     annotations: {
@@ -405,7 +405,7 @@ export class TokenTool {
     name: 'getTokenLiquidityPools',
     description: 'Get all liquidity pools containing the specified token',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       tokenAddress: z.string().describe('Token contract address'),
     }),
     annotations: {
@@ -476,7 +476,7 @@ export class TokenTool {
     name: 'getTokenStats',
     description: 'Get token statistics across multiple timeframes',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       tokenAddress: z.string().describe('Token contract address'),
     }),
     annotations: {
@@ -625,7 +625,7 @@ export class TokenTool {
     name: 'getTokenHolders',
     description: 'Get holders of a token by chain and address',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       tokenAddress: z.string().describe('Token contract address'),
     }),
     annotations: {

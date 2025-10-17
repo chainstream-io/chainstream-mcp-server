@@ -6,11 +6,12 @@ import { Prompt } from '../../../dist';
 export class DexPrompt {
   constructor() {}
 
+  /*
   @Prompt({
     name: 'getRouteAnalysis',
     description: 'Analyze optimal DEX trading route between two tokens, with gas cost, slippage, and alternative path comparison.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       fromToken: z.string().describe('Source token address or symbol'),
       toToken: z.string().describe('Destination token address or symbol'),
       amount: z.string().describe('Amount of tokens to swap'),
@@ -50,7 +51,7 @@ Let me fetch this information for you using the getRoute tool.`,
     name: 'getSwapGuide',
     description: 'Step‑by‑step guide for executing a secure token swap, covering route, slippage, gas, and wallet safety.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       fromToken: z.string().describe('Source token address or symbol'),
       toToken: z.string().describe('Destination token address or symbol'),
       amount: z.string().describe('Amount of tokens to swap'),
@@ -153,7 +154,7 @@ Let me help you implement this strategy using the appropriate DEX tools.`,
         },
       ],
     };
-  }
+  }*/
  
   
   @Prompt({

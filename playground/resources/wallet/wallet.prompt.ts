@@ -11,7 +11,7 @@ export class WalletPrompt {
     description: 'Query the balance of a wallet on a specific chain, including native and token balances.',
     parameters: z.object({
       walletAddress: z.string().describe('Wallet address to check balance'),
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
     }),
   })
   getWalletBalanceGuide({ walletAddress, chain }) {
