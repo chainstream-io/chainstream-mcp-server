@@ -8,7 +8,7 @@ export class RankingPrompt {
 
   @Prompt({
     name: 'hot-tokens-analysis',
-    description: 'Analyze hot tokens trends and investment advice',
+    description: 'Analyze trending tokens on a chain within a timeframe, covering price, volume, sentiment, risks, and investment tips.',
     parameters: z.object({
       chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
       timeframe: z.string().describe('Time range'),
@@ -45,7 +45,7 @@ Please use the getHotTokens tool to get the latest data.`,
 
   @Prompt({
     name: 'ranking-new-tokens-guide',
-    description: 'Guide to fetch the latest 100 tokens on a specific chain',
+    description: 'Fetch the latest 100 newly launched tokens on a chain, with metadata, market data, and social info.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
     }),
@@ -79,7 +79,7 @@ Please use the getHotTokens tool to get the latest data.`,
   
   @Prompt({
     name: 'ranking-stocks-tokens-guide',
-    description: 'Guide to fetch stock-related tokens on a specific chain',
+    description: 'Retrieve tokens that represent or track stock assets on a chain, with market and metadata details.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
     }),
@@ -114,7 +114,7 @@ Please use the getHotTokens tool to get the latest data.`,
 
   @Prompt({
     name: 'ranking-finalstretch-tokens-guide',
-    description: 'Guide to fetch finalStretch tokens on a specific chain',
+    description: 'Fetch tokens in their final stretch phase on a chain, including stats, metadata, and protocol info.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
     }),
@@ -149,7 +149,7 @@ Please use the getHotTokens tool to get the latest data.`,
   
   @Prompt({
     name: 'ranking-migrated-tokens-guide',
-    description: 'Guide to fetch migrated tokens on a specific chain',
+    description: 'Retrieve tokens that have migrated to new protocols or pools, with migration metadata and market stats.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
     }),

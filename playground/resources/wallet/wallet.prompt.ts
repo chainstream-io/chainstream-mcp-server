@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Prompt } from '../../../dist';
 import { z } from 'zod';
+import { Prompt } from '../../../dist';
 
 @Injectable({ scope: Scope.REQUEST })
 export class WalletPrompt {
@@ -8,7 +8,7 @@ export class WalletPrompt {
 
   @Prompt({
     name: 'wallet-balance-guide',
-    description: 'Wallet balance query guide',
+    description: 'Query the balance of a wallet on a specific chain, including native and token balances.',
     parameters: z.object({
       walletAddress: z.string().describe('Wallet address to check balance'),
       chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
@@ -45,7 +45,7 @@ Please use the getBalance tool to retrieve the wallet balance information.`,
 
   @Prompt({
     name: 'wallet-analysis-strategy',
-    description: 'Wallet analysis strategy guide',
+    description: 'Generate wallet analysis strategies (balance monitoring, portfolio, history, risk) for different timeframes.',
     parameters: z.object({
       analysisType: z.enum(['balance-monitoring', 'portfolio-tracking', 'transaction-history', 'risk-assessment']).describe('Analysis type'),
       timeFrame: z.enum(['current', 'daily', 'weekly', 'monthly']).describe('Time frame for analysis'),

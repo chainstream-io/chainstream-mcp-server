@@ -1046,6 +1046,7 @@ export class TokenTool {
   
       const dexClient = new DexClient(accessToken);
   
+      console.log("getMarketDataMulti:", chain, tokenAddresses);
       const marketDataMap = await dexClient.token.getMarketDataMulti({
         chain: chain as SupportedChain,
         tokenAddresses,

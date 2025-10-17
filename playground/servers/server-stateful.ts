@@ -62,7 +62,6 @@ import { WalletTool } from '../resources/wallet/wallet.tool';
     WalletResource,
     WalletTool,
     WalletPrompt,
-
     BlockchainPrompt,
     BlockchainResource,
     BlockchainTool,
@@ -75,7 +74,6 @@ import { WalletTool } from '../resources/wallet/wallet.tool';
     TradePrompt,
     TradeResource,
     TradeTool,
-  
   ],
 })
 export class AppModule {}

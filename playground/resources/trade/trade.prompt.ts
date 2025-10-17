@@ -8,7 +8,7 @@ export class TradePrompt {
 
   @Prompt({
     name: 'trade-list-guide',
-    description: 'Guide to fetch a list of transactions on a specific chain',
+    description: 'Fetch a list of trades on a chain, filterable by token, wallet, pool, type, time, or block height.',
     parameters: z.object({
       chain: z.string(),
       tokenAddress: z.string().optional(),
@@ -55,7 +55,7 @@ export class TradePrompt {
   
   @Prompt({
     name: 'trade-top-traders-guide',
-    description: 'Guide to fetch top traders for a specific token on a chain',
+    description: 'Retrieve top traders for a token on a chain, with volume, trade count, and sorting options.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       tokenAddress: z.string().describe('Token address to query top traders'),
@@ -97,7 +97,7 @@ export class TradePrompt {
 
   @Prompt({
     name: 'trade-gainers-losers-guide',
-    description: 'Guide to fetch top gainers and losers on a specific chain',
+    description: 'Fetch top gaining and losing tokens on a chain, based on PnL, volume, and timeframe.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       type: z.string().optional().describe('Time frame type (e.g., 1W, 24h)'),
@@ -137,7 +137,7 @@ export class TradePrompt {
   
   @Prompt({
     name: 'trade-activity-list-guide',
-    description: 'Guide to query token activities including trades, liquidity, and red packet events',
+    description: 'Query token-related activities (trades, liquidity, red packets) with multiple filters and pagination.',
     parameters: z.object({
       chain: z.string().describe('Blockchain network (e.g., sol, eth, bsc)'),
       cursor: z.string().optional().describe('Pagination cursor'),

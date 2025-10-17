@@ -22,6 +22,7 @@
     "build": "tsc -p tsconfig.build.json --sourceMap --inlineSources",
     "prepare": "npm run build",
     "start:playground": "ts-node-dev --respawn playground/servers/server-stateful.ts",
+    "start:less": "ts-node-dev --respawn playground/servers/server-stateless.ts",
     "start:fastify": "ts-node-dev --respawn playground/servers/server-fastify.ts",
     "test": "npx --node-options=--experimental-vm-modules jest",
     "test:watch": "npx --node-options=--experimental-vm-modules jest --watch",
@@ -85,13 +86,14 @@
     "zod-to-json-schema": "^3.22.3"
   },
   "dependencies": {
-    "@chainstream-io/sdk": "^0.1.10",
+    "@chainstream-io/sdk": "^0.1.11",
     "@nestjs/config": "^4.0.2",
     "cookie-parser": "^1.4.7",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
     "passport-google-oauth20": "^2.0.0",
     "path-to-regexp": "^8.2.0",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "ws": "^8.18.3"
   }
 }

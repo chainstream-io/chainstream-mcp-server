@@ -8,7 +8,7 @@ export class DexpoolPrompt {
 
   @Prompt({
     name: 'dexpool-detail-guide',
-    description: 'Guide to fetch detailed information about a specific DEX pool',
+    description: 'Retrieve detailed information for a specific DEX pool, including token pair, protocol, TVL, and chain data.',
     parameters: z.object({
       chain: z.string().describe(
         'Chain name (supported: sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)'

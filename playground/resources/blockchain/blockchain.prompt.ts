@@ -8,7 +8,7 @@ export class BlockchainPrompt {
 
   @Prompt({
     name: 'blockchain-list-guide',
-    description: 'Guide to fetch list of supported blockchains',
+    description: 'Fetch and describe the full list of supported blockchains, including symbol, name, explorer URL, and chain ID.',
     parameters: z.object({}),
   })
   getBlockchainListGuide() {
@@ -42,7 +42,7 @@ export class BlockchainPrompt {
 
   @Prompt({
     name: 'blockchain-latest-block-guide',
-    description: 'Guide to fetch the latest block information for a specific blockchain',
+    description: 'Retrieve the latest block details for a given blockchain, including block hash and block height.',
     parameters: z.object({
       chain: z.string().describe(
         'Chain name (supported: sol, base, bsc, polygon, arbitrum, optimism, avalanche, ethereum, zksync, sui)'

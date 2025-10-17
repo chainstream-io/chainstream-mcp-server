@@ -8,7 +8,7 @@ export class RedpacketPrompt {
 
   @Prompt({
     name: 'redpacket-create-guide',
-    description: 'Guide to create a red packet on a specific chain',
+    description: 'Create a red packet transaction on a specific chain, including creator, mint, claims, and optional settings.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       creator: z.string().describe('Wallet address of the creator'),
@@ -51,7 +51,7 @@ export class RedpacketPrompt {
 
   @Prompt({
     name: 'redpacket-claim-guide',
-    description: 'Guide to claim a red packet on a specific chain',
+    description: 'Claim a red packet on a specific chain using claimer address, packet ID, and optional password.',
     parameters: z.object({
       chain: z.string().describe('Chain name (e.g., sol, eth, bsc)'),
       claimer: z.string().describe('Wallet address of the claimer'),
@@ -89,7 +89,7 @@ export class RedpacketPrompt {
   
   @Prompt({
     name: 'redpacket-get-guide',
-    description: 'Guide to query red packet information by ID',
+    description: 'Query detailed information of a red packet by its ID, including creator, mint, amount, and status.',
     parameters: z.object({
       id: z.string().describe('Red packet ID'),
     }),
@@ -123,7 +123,7 @@ export class RedpacketPrompt {
   
   @Prompt({
     name: 'redpacket-get-claims-guide',
-    description: 'Guide to query red packet claim records by ID',
+    description: 'Fetch claim records of a red packet by ID, with pagination and sorting options.',
     parameters: z.object({
       id: z.string().describe('Red packet ID'),
       cursor: z.string().optional().describe('Pagination cursor'),
@@ -159,7 +159,7 @@ export class RedpacketPrompt {
   
   @Prompt({
     name: 'redpacket-get-list-guide',
-    description: 'Guide to fetch a list of red packets with filters and pagination',
+    description: 'Retrieve a list of red packets with optional filters (creator, chain) and pagination.',
     parameters: z.object({
       cursor: z.string().optional().describe('Pagination cursor'),
       limit: z.string().optional().describe('Number of records per page (1–100)'),
@@ -197,7 +197,7 @@ export class RedpacketPrompt {
   
   @Prompt({
     name: 'redpacket-get-claims-by-address-guide',
-    description: 'Guide to query red packet claim records by wallet address',
+    description: 'Query all red packet claim records by a specific wallet address, with pagination.',
     parameters: z.object({
       address: z.string().describe('Claimer wallet address'),
       cursor: z.string().optional().describe('Pagination cursor'),
@@ -233,7 +233,7 @@ export class RedpacketPrompt {
   
   @Prompt({
     name: 'redpacket-get-by-address-guide',
-    description: 'Guide to query red packets created by a specific address',
+    description: 'Fetch red packets created by a specific wallet address, with pagination and metadata.',
     parameters: z.object({
       address: z.string().describe('Creator wallet address'),
       cursor: z.string().optional().describe('Pagination cursor'),
@@ -270,7 +270,7 @@ export class RedpacketPrompt {
   
   @Prompt({
     name: 'redpacket-send-guide',
-    description: 'Guide to send a signed red packet transaction',
+    description: 'Send a signed red packet transaction to the blockchain network.',
     parameters: z.object({
       chain: z.string().describe('Blockchain network (e.g., sol, eth, bsc)'),
       signedTx: z.string().describe('Signed transaction hash'),

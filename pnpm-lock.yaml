@@ -9,17 +9,14 @@ importers:
   .:
     dependencies:
       '@chainstream-io/sdk':
-        specifier: ^0.1.10
-        version: 0.1.10
+        specifier: ^0.1.11
+        version: 0.1.11
       '@nestjs/config':
         specifier: ^4.0.2
         version: 4.0.2(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
-      event-source-polyfill:
-        specifier: ^1.0.31
-        version: 1.0.31
       passport:
         specifier: ^0.7.0
         version: 0.7.0
@@ -35,6 +32,9 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
+      ws:
+        specifier: ^8.18.3
+        version: 8.18.3
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -312,8 +312,8 @@ packages:
   '@chainstream-io/centrifuge@1.0.0':
     resolution: {integrity: sha512-/XbwU0IHnI2CoNCeKZWHAuLHUPrcl6do31KI1SpSrGpTlq0O8CEolMsmKasb0BbJTRn7mrB1WWlCgUOgQMkBgg==}
 
-  '@chainstream-io/sdk@0.1.10':
-    resolution: {integrity: sha512-ZbPdNsExxiZN6WsBIdMiL2J7OfUotPcqXx1TZObop9hvVbg0aqNABHBswu1AlaFJijtndl35HkzSpLDwJfEghQ==}
+  '@chainstream-io/sdk@0.1.11':
+    resolution: {integrity: sha512-F3XCVAn6UrHZ0dHnJ3ZA49er5g93Hq1oQLMRKLFFu1yz7xEfesbtCW1v7BlPneu6BMjady8dAx2pNrLhEiyquw==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -2989,6 +2989,18 @@ packages:
     resolution: {integrity: sha512-7KxauUdBmSdWnmpaGFg+ppNjKF8uNLry8LyzjauQDOVONfFLNKrKvQOxZ/VuTIcS/gge/YNahf5RIIQWTSarlg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
 
+  ws@8.18.3:
+    resolution: {integrity: sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
@@ -3222,7 +3234,7 @@ snapshots:
       events: 3.3.0
       protobufjs: 7.5.4
 
-  '@chainstream-io/sdk@0.1.10':
+  '@chainstream-io/sdk@0.1.11':
     dependencies:
       '@chainstream-io/centrifuge': 1.0.0
       event-source-polyfill: 1.0.31
@@ -6313,6 +6325,8 @@ snapshots:
     dependencies:
       imurmurhash: 0.1.4
       signal-exit: 3.0.7
+
+  ws@8.18.3: {}
 
   xtend@4.0.2: {}
 

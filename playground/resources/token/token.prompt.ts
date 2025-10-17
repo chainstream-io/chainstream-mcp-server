@@ -145,7 +145,7 @@ Please use the getToken tool to get detailed information.`,
   // 获取 Token Metadata
   @Prompt({
     name: 'token-metadata-guide',
-    description: 'Guide to fetch token metadata information',
+    description: 'Fetch on-chain metadata (name, symbol, decimals, creators, logo, social links)',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
       chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
@@ -264,7 +264,7 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
 
   @Prompt({
     name: 'token-stats-guide',
-    description: 'Guide to fetch token statistics across multiple timeframes',
+    description: 'Fetch trading statistics (price movements, volumes, trader activity)',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
       chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
@@ -497,7 +497,7 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
   
   @Prompt({
     name: 'token-market-data-guide',
-    description: 'Guide to fetch market data of a token',
+    description: 'Fetch market metrics (supply, market cap, holders, TVL)',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
       chain: z.string().describe(
@@ -738,7 +738,7 @@ Please use the getTokenMetadata tool to fetch the actual data from the API.`,
   
   @Prompt({
     name: 'token-security-guide',
-    description: 'Guide to fetch token security information',
+    description: 'Fetch security attributes (permissions, authorities, freeze/mint status)',
     parameters: z.object({
       tokenAddress: z.string().describe('Token contract address'),
       chain: z.string().describe(

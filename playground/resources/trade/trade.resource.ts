@@ -1,11 +1,13 @@
+
 import { DexClient } from '@chainstream-io/sdk';
 import {
-  GetActivitiesChainEnum,
+  ChainSymbol,
   GetActivitiesDirectionEnum,
-  GetActivitiesTypeEnum, GetGainersLosersTypeEnum, GetTopTradersSortByEnum, GetTopTradersSortTypeEnum, GetTradesTypeEnum
+  GetActivitiesTypeEnum, GetGainersLosersTypeEnum, GetTopTradersSortByEnum, GetTopTradersSortTypeEnum,
+  GetTopTradersTimeFrameEnum,
+  GetTradesTypeEnum
 } from '@chainstream-io/sdk/openapi';
 import { Injectable, Scope } from '@nestjs/common';
-import { GetTopTradersTimeFrameEnum } from 'node_modules/@chainstream-io/sdk/dist/esm/openapi';
 import { Resource, ResourceTemplate } from '../../../dist';
 
 // Define supported chain types based on SDK
@@ -369,7 +371,7 @@ export class TradeResource {
 
           const dexClient = new DexClient(accessToken);
           const result =  await dexClient.trade.getActivities({
-            chain: chain as GetActivitiesChainEnum,
+            chain: chain as ChainSymbol,
             cursor: queryParams.cursor,
             limit: queryParams.limit,
             direction: typedDirection,
