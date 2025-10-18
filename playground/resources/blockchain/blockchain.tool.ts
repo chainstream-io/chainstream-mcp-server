@@ -65,21 +65,18 @@ export class BlockchainTool {
       return {
         content: [
           {
-            type: 'text',
-            text: JSON.stringify(
-              {
-                success: false,
-                error: 'Failed to get blockchain list',
-                message: error.message,
-                message_all: error,
-                timestamp: new Date().toISOString(),
-              },
-              null,
-              2,
-            ),
+            type: 'json',
+            json: {
+              success: false,
+              error: 'Failed to get blockchain list',
+              message: error.message,
+              message_all: error,
+              timestamp: new Date().toISOString(),
+            },
           },
         ],
       };
+      
     }
   }
 
