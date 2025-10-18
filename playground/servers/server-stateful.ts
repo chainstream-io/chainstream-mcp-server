@@ -1,6 +1,3 @@
-import { WebSocket } from 'ws';
-(global as any).WebSocket = WebSocket;
-
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { McpModule } from '../../dist';

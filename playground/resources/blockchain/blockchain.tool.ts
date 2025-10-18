@@ -25,7 +25,7 @@ export class BlockchainTool {
   @Tool({
     name: 'getBlockchainList',
     description: 'Get list of supported blockchains',
-    parameters: z.object({}),
+    // parameters: z.object({}),
     annotations: {
       title: 'Blockchain List Query Tool',
       destructiveHint: false,

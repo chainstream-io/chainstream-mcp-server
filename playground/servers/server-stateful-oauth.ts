@@ -7,9 +7,6 @@ import * as dotenv from 'dotenv';
 import 'reflect-metadata';
 import { GitHubOAuthProvider, McpAuthModule, McpModule } from '../../src';
 import { McpAuthJwtGuard } from '../../src/authz/guards/jwt-auth.guard';
-import { GreetingPrompt } from '../resources/greeting.prompt';
-import { GreetingResource } from '../resources/greeting.resource';
-import { GreetingTool } from '../resources/greeting.tool';
 
 dotenv.config();
 
@@ -71,7 +68,7 @@ dotenv.config();
       guards: [McpAuthJwtGuard],
     }),
   ],
-  providers: [GreetingResource, GreetingTool, GreetingPrompt, McpAuthJwtGuard],
+  providers: [McpAuthJwtGuard],
 })
 class AppModule {}
 

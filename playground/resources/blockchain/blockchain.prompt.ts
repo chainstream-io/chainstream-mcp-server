@@ -10,7 +10,7 @@ export class BlockchainPrompt {
     name: 'blockchain-list-guide',
     description:
       'Fetch and describe the full list of supported blockchains, including symbol, name, explorer URL, and chain ID.',
-    parameters: z.object({}),
+    // parameters: z.object({}),
   })
   getBlockchainListGuide() {
     return {
