@@ -71,6 +71,7 @@ export class BlockchainTool {
                 success: false,
                 error: 'Failed to get blockchain list',
                 message: error.message,
+                message_all: error,
                 timestamp: new Date().toISOString(),
               },
               null,
