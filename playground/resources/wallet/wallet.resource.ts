@@ -1,131 +1,357 @@
+import { ChainStreamClient } from '@chainstream-io/sdk';
 import { Injectable, Scope } from '@nestjs/common';
-import { Resource, ResourceTemplate } from '../../../dist';
-import { DexClient } from '@chainstream-io/sdk';
-
-// Define supported chain types based on SDK
-type SupportedChain =
-  | 'sol'
-  | 'base'
-  | 'bsc'
-  | 'polygon'
-  | 'arbitrum'
-  | 'optimism'
-  | 'avalanche'
-  | 'ethereum'
-  | 'zksync'
-  | 'sui';
+import { ResourceTemplate } from '../../../dist';
 
 @Injectable({ scope: Scope.REQUEST })
 export class WalletResource {
+  private getClient(req: Request): ChainStreamClient {
+    const accessToken = req.headers.get('Authorization')?.split(' ')[1];
+    if (!accessToken) {
+      throw new Error('Access token is required.');
+    }
+    return new ChainStreamClient(accessToken);
+  }
+
+  private respond(uri: string, data: any) {
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: 'application/json',
+          text: JSON.stringify(data, null, 2),
+        },
+      ],
+    };
+  }
+
   @ResourceTemplate({
-    name: 'getBalance',
-    description: `Get wallet balance on a specific chain.
+    name: 'getTokensBalance',
+    description: `Get wallet token balances on a specific chain.
 
-🔐 **Authentication Required**: See playground/resources/README.md for ChainStream API authentication details.
-
-**Supported Chains**: 
-- sol (Solana)
-- base (Base)
-- bsc (Binance Smart Chain)
-- polygon (Polygon)
-- arbitrum (Arbitrum)
-- optimism (Optimism)
-- avalanche (Avalanche)
-- ethereum (Ethereum)
-- zksync (zkSync)
-- sui (Sui)
-
-**Chain Aliases**: You can also use these alternative names:
-- solana → sol
-- binance → bsc
-- matic → polygon
-- arb → arbitrum
-- op → optimism
-- avax → avalanche
-- eth → ethereum
-
-**API Documentation**: https://docs.chainstream.io/en/api-reference/endpoint/wallet/v1-wallet-balance`,
+🔐 Authentication Required`,
     mimeType: 'application/json',
-    uriTemplate: 'mcp://dex/wallet/{chain}/{walletAddress}',
+    uriTemplate: 'mcp://dex/wallet/tokens-balance/{chain}/{walletAddress}',
   })
-  async getBalance(req: Request, { uri, chain, walletAddress }) {
+  async getTokensBalance(req: Request, { uri, chain, walletAddress }) {
     try {
-      // Get accessToken from request headers
-      const accessToken = req.headers.get('Authorization')?.split(' ')[1];
-
-      // Validate accessToken
-      if (!accessToken) {
-        throw new Error(
-          'Access token is required. Please provide a valid JWT token.',
-        );
-      }
-
-      // Validate chain parameter
-      const supportedChains: SupportedChain[] = [
-        'sol',
-        'base',
-        'bsc',
-        'polygon',
-        'arbitrum',
-        'optimism',
-        'avalanche',
-        'ethereum',
-        'zksync',
-        'sui',
-      ];
-      if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(
-          `Unsupported chain: ${chain}. Supported chains: ${supportedChains.join(', ')}`,
-        );
-      }
-
-      // Initialize DexClient with provided accessToken
-      const dexClient = new DexClient(accessToken);
-
-      // Call SDK wallet.getBalance method with validated chain
-      const balanceInfo = await dexClient.wallet.getBalance({
-        chain: chain as SupportedChain,
-        walletAddress: walletAddress,
+      const client = this.getClient(req);
+      const data = await client.wallet.getTokensBalance(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get tokens balance',
+        message: (error as any).message,
       });
+    }
+  }
 
-      return {
-        contents: [
-          {
-            uri: uri, // Required by MCP protocol - must match the requested URI
-            mimeType: 'application/json',
-            text: JSON.stringify(
-              {
-                chain: chain,
-                walletAddress: walletAddress,
-                balanceInfo: balanceInfo,
-                timestamp: new Date().toISOString(),
-              },
-              null,
-              2,
-            ),
-          },
-        ],
-      };
-    } catch (error) {
-      return {
-        contents: [
-          {
-            uri: uri, // Required by MCP protocol - must match the requested URI
-            mimeType: 'application/json',
-            text: JSON.stringify(
-              {
-                error: 'Failed to get wallet balance',
-                chain: chain,
-                walletAddress: walletAddress,
-                message: error.message,
-                timestamp: new Date().toISOString(),
-              },
-              null,
-              2,
-            ),
-          },
-        ],
-      };
+  @ResourceTemplate({
+    name: 'getPnl',
+    description: `Get wallet PnL summary on a specific chain.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/pnl/{chain}/{walletAddress}',
+  })
+  async getPnl(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getPnl(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get PnL summary',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getPnlDetails',
+    description: `Get per-token PnL breakdown for a wallet.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/pnl-details/{chain}/{walletAddress}',
+  })
+  async getPnlDetails(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getPnlDetails(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get PnL details',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getPnlByToken',
+    description: `Get PnL for specific tokens in a wallet. Use the tool version to specify token addresses.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/pnl-by-token/{chain}/{walletAddress}',
+  })
+  async getPnlByToken(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getPnlByToken(chain, walletAddress, {
+        tokenAddresses: '',
+      });
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get PnL by token',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getPnlByWallet',
+    description: `Get PnL across multiple wallets. Use the tool version to specify wallet and token addresses.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/pnl-by-wallet/{chain}',
+  })
+  async getPnlByWallet(req: Request, { uri, chain }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getPnlByWallet(chain, {
+        walletAddresses: '',
+        tokenAddress: '',
+      });
+      return this.respond(uri, { chain, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get PnL by wallet',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'calculatePnl',
+    description: `Trigger PnL calculation for a wallet.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/calculate-pnl/{chain}/{walletAddress}',
+  })
+  async calculatePnl(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.calculatePnl(chain, walletAddress, {});
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to calculate PnL',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getNetWorth',
+    description: `Get wallet net worth with token holdings.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/net-worth/{chain}/{walletAddress}',
+  })
+  async getNetWorth(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getNetWorth(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get net worth',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getNetWorthDetails',
+    description: `Get detailed net worth breakdown for a wallet.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/net-worth-details/{chain}/{walletAddress}',
+  })
+  async getNetWorthDetails(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getNetWorthDetails(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get net worth details',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getNetWorthChart',
+    description: `Get historical net worth chart data for a wallet.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/net-worth-chart/{chain}/{walletAddress}',
+  })
+  async getNetWorthChart(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getNetWorthChart(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get net worth chart',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getNetWorthByTokens',
+    description: `Get net worth by specific tokens. Use the tool version to specify token addresses.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/net-worth-by-tokens/{chain}/{walletAddress}',
+  })
+  async getNetWorthByTokens(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getNetWorthByTokens(
+        chain,
+        walletAddress,
+        { tokenAddresses: '' },
+      );
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get net worth by tokens',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getNetWorthSummary',
+    description: `Get multi-wallet net worth summary. Use the tool version to specify wallet addresses.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/net-worth-summary/{chain}',
+  })
+  async getNetWorthSummary(req: Request, { uri, chain }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getNetWorthSummary(chain, {
+        walletAddresses: '',
+      });
+      return this.respond(uri, { chain, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get net worth summary',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getBalanceUpdates',
+    description: `Get balance change history for a wallet.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/balance-updates/{chain}/{walletAddress}',
+  })
+  async getBalanceUpdates(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getBalanceUpdates(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get balance updates',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getWalletTransfers',
+    description: `Get wallet transfer history.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/transfers/{chain}/{walletAddress}',
+  })
+  async getWalletTransfers(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getWalletTransfers(chain, walletAddress);
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get wallet transfers',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getWalletTransferTotal',
+    description: `Get wallet transfer total count.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/transfer-total/{chain}/{walletAddress}',
+  })
+  async getWalletTransferTotal(req: Request, { uri, chain, walletAddress }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getWalletTransferTotal(
+        chain,
+        walletAddress,
+      );
+      return this.respond(uri, { chain, walletAddress, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get wallet transfer total',
+        message: (error as any).message,
+      });
+    }
+  }
+
+  @ResourceTemplate({
+    name: 'getWalletFirstTx',
+    description: `Get first funded transaction for wallets. Use the tool version to specify wallet addresses.
+
+🔐 Authentication Required`,
+    mimeType: 'application/json',
+    uriTemplate: 'mcp://dex/wallet/first-tx/{chain}',
+  })
+  async getWalletFirstTx(req: Request, { uri, chain }) {
+    try {
+      const client = this.getClient(req);
+      const data = await client.wallet.getWalletFirstTx(chain, {
+        walletAddresses: '',
+      });
+      return this.respond(uri, { chain, data });
+    } catch (error: unknown) {
+      return this.respond(uri, {
+        error: 'Failed to get wallet first transaction',
+        message: (error as any).message,
+      });
     }
   }
 }

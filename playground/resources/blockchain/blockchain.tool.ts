@@ -1,22 +1,9 @@
-import { DexClient } from '@chainstream-io/sdk';
+import { ChainStreamClient } from '@chainstream-io/sdk';
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { z } from 'zod';
 import { Tool } from '../../../dist';
-
-// Define supported chain types based on SDK
-type SupportedChain =
-  | 'sol'
-  | 'base'
-  | 'bsc'
-  | 'polygon'
-  | 'arbitrum'
-  | 'optimism'
-  | 'avalanche'
-  | 'ethereum'
-  | 'zksync'
-  | 'sui';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BlockchainTool {
@@ -25,7 +12,6 @@ export class BlockchainTool {
   @Tool({
     name: 'getBlockchainList',
     description: 'Get list of supported blockchains',
-    // parameters: z.object({}),
     annotations: {
       title: 'Blockchain List Query Tool',
       destructiveHint: false,
@@ -40,9 +26,8 @@ export class BlockchainTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-
-      const blockchains = await dexClient.blockchain.getSupportedBlockchains();
+      const client = new ChainStreamClient(accessToken);
+      const blockchains = await client.blockchain.getSupportedBlockchains();
 
       return {
         content: [
@@ -86,7 +71,7 @@ export class BlockchainTool {
     name: 'getBlockchainLatestBlock',
     description: 'Get the latest block information for a specific blockchain',
     parameters: z.object({
-      chain: z.string().describe('Chain name'),
+      chain: z.string().describe('Chain symbol (sol, eth, bsc)'),
     }),
     annotations: {
       title: 'Blockchain Latest Block Query Tool',
@@ -102,27 +87,8 @@ export class BlockchainTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const supportedChains: SupportedChain[] = [
-        'sol',
-        'base',
-        'bsc',
-        'polygon',
-        'arbitrum',
-        'optimism',
-        'avalanche',
-        'ethereum',
-        'zksync',
-        'sui',
-      ];
-      if (!supportedChains.includes(chain as SupportedChain)) {
-        throw new Error(`Unsupported chain: ${chain}`);
-      }
-
-      const dexClient = new DexClient(accessToken);
-
-      const latestBlock = await dexClient.blockchain.getLatestBlock({
-        chain: chain as SupportedChain,
-      });
+      const client = new ChainStreamClient(accessToken);
+      const latestBlock = await client.blockchain.getLatestBlock(chain);
 
       return {
         content: [

@@ -6,12 +6,11 @@ import { Prompt } from '../../../dist';
 export class DexPrompt {
   constructor() {}
 
-  /*
   @Prompt({
     name: 'getRouteAnalysis',
     description: 'Analyze optimal DEX trading route between two tokens, with gas cost, slippage, and alternative path comparison.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (e.g. sol, eth, bsc)'),
       fromToken: z.string().describe('Source token address or symbol'),
       toToken: z.string().describe('Destination token address or symbol'),
       amount: z.string().describe('Amount of tokens to swap'),
@@ -49,9 +48,9 @@ Let me fetch this information for you using the getRoute tool.`,
 
   @Prompt({
     name: 'getSwapGuide',
-    description: 'Step‑by‑step guide for executing a secure token swap, covering route, slippage, gas, and wallet safety.',
+    description: 'Step-by-step guide for executing a secure token swap, covering route, slippage, gas, and wallet safety.',
     parameters: z.object({
-      chain: z.string().describe('Chain name (supported aliases: solana→sol, binance→bsc, bnb->bsc, matic→polygon, arb→arbitrum, op→optimism, avax→avalanche, eth→ethereum)'),
+      chain: z.string().describe('Chain name (e.g. sol, eth, bsc)'),
       fromToken: z.string().describe('Source token address or symbol'),
       toToken: z.string().describe('Destination token address or symbol'),
       amount: z.string().describe('Amount of tokens to swap'),
@@ -88,7 +87,7 @@ Let me fetch this information for you using the getRoute tool.`,
 - Use reputable DEX protocols
 - Consider using a test transaction first
 
-Let me help you execute this swap safely using the executeSwap tool.`,
+Let me help you execute this swap safely using the swap tool.`,
           },
         },
       ],
@@ -154,7 +153,7 @@ Let me help you implement this strategy using the appropriate DEX tools.`,
         },
       ],
     };
-  }*/
+  }
 
   @Prompt({
     name: 'dex-list-guide',

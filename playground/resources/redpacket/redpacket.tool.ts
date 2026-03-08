@@ -1,55 +1,9 @@
-import { DexClient } from '@chainstream-io/sdk';
+import { ChainStreamClient } from '@chainstream-io/sdk';
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { z } from 'zod';
 import { Tool } from '../../../dist';
-
-// Define supported chain types based on SDK
-type SupportedChain =
-  | 'sol'
-  | 'base'
-  | 'bsc'
-  | 'polygon'
-  | 'arbitrum'
-  | 'optimism'
-  | 'avalanche'
-  | 'ethereum'
-  | 'zksync'
-  | 'sui';
-
-// Define supported duration types
-type Duration = '1m' | '5m' | '1h' | '4h' | '24h';
-
-// Define supported sort fields for ranking
-type RankingSortByField =
-  | 'marketData.priceInUsd'
-  | 'stats.priceChangeRatioInUsd1m'
-  | 'stats.priceChangeRatioInUsd5m'
-  | 'stats.priceChangeRatioInUsd1h'
-  | 'stats.priceChangeRatioInUsd4h'
-  | 'stats.priceChangeRatioInUsd24h'
-  | 'marketData.marketCapInUsd'
-  | 'marketData.tvlInUsd'
-  | 'marketData.top10HoldingsRatio'
-  | 'marketData.top100HoldingsRatio'
-  | 'marketData.holders'
-  | 'stats.trades1m'
-  | 'stats.trades5m'
-  | 'stats.trades1h'
-  | 'stats.trades4h'
-  | 'stats.trades24h'
-  | 'stats.traders1m'
-  | 'stats.traders5m'
-  | 'stats.traders1h'
-  | 'stats.traders4h'
-  | 'stats.traders24h'
-  | 'stats.volumesInUsd1m'
-  | 'stats.volumesInUsd5m'
-  | 'stats.volumesInUsd1h'
-  | 'stats.volumesInUsd4h'
-  | 'stats.volumesInUsd24h'
-  | 'tokenCreatedAt';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RedpacketTool {
@@ -83,9 +37,9 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
+      const client = new ChainStreamClient(accessToken);
 
-      const createRedPacketInput: any = {
+      const createRedPacketRequest: any = {
         creator: params.creator,
         mint: params.mint,
         maxClaims: Number(params.maxClaims),
@@ -96,16 +50,16 @@ export class RedpacketTool {
         claimAuthority: params.claimAuthority,
       };
 
-      Object.keys(createRedPacketInput).forEach(
+      Object.keys(createRedPacketRequest).forEach(
         (key) =>
-          createRedPacketInput[key] === undefined &&
-          delete createRedPacketInput[key],
+          createRedPacketRequest[key] === undefined &&
+          delete createRedPacketRequest[key],
       );
 
-      const result = await dexClient.redPacket.createRedpacket({
-        chain: params.chain as SupportedChain,
-        createRedPacketInput,
-      });
+      const result = await client.redPacket.createRedpacket(
+        params.chain,
+        createRedPacketRequest,
+      );
 
       return {
         content: [
@@ -176,21 +130,25 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
+      const client = new ChainStreamClient(accessToken);
 
-      const claimParams: any = {
-        chain: params.chain,
+      const claimRedPacketRequest: any = {
         claimer: params.claimer,
         packetId: params.packetId,
         shareId: params.shareId,
         password: params.password,
       };
 
-      Object.keys(claimParams).forEach(
-        (key) => claimParams[key] === undefined && delete claimParams[key],
+      Object.keys(claimRedPacketRequest).forEach(
+        (key) =>
+          claimRedPacketRequest[key] === undefined &&
+          delete claimRedPacketRequest[key],
       );
 
-      const result = await dexClient.redPacket.claimRedpacket(claimParams);
+      const result = await client.redPacket.claimRedpacket(
+        params.chain,
+        claimRedPacketRequest,
+      );
 
       return {
         content: [
@@ -253,8 +211,8 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.getRedpacket({ id });
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.redPacket.getRedpacket(id);
 
       return {
         content: [
@@ -318,9 +276,8 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.getClaims({
-        id: params.id,
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.redPacket.getClaims(params.id, {
         cursor: params.cursor || '',
         limit: params.limit
           ? Math.min(Math.max(Number(params.limit), 1), 100)
@@ -398,8 +355,8 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.getRedpackets({
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.redPacket.getRedpackets({
         cursor: params.cursor || '',
         limit: params.limit
           ? Math.min(Math.max(Number(params.limit), 1), 100)
@@ -478,9 +435,8 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.getClaimsByAddress({
-        address: params.address,
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.redPacket.getClaimsByAddress(params.address, {
         cursor: params.cursor || '',
         limit: params.limit
           ? Math.min(Math.max(Number(params.limit), 1), 100)
@@ -557,15 +513,17 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.getRedpacketsByAddress({
-        address: params.address,
-        cursor: params.cursor || '',
-        limit: params.limit
-          ? Math.min(Math.max(Number(params.limit), 1), 100)
-          : 20,
-        direction: params.direction || 'desc',
-      });
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.redPacket.getRedpacketsByAddress(
+        params.address,
+        {
+          cursor: params.cursor || '',
+          limit: params.limit
+            ? Math.min(Math.max(Number(params.limit), 1), 100)
+            : 20,
+          direction: params.direction || 'desc',
+        },
+      );
 
       return {
         content: [
@@ -645,12 +603,9 @@ export class RedpacketTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.redPacket.redpacketSend({
-        chain: params.chain,
-        redPacketSendTxInput: {
-          signedTx: params.signedTx,
-        },
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.redPacket.redpacketSend(params.chain, {
+        signedTx: params.signedTx,
       });
 
       return {

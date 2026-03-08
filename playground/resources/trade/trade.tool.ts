@@ -1,55 +1,9 @@
-import { DexClient } from '@chainstream-io/sdk';
+import { ChainStreamClient } from '@chainstream-io/sdk';
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { z } from 'zod';
 import { Tool } from '../../../dist';
-
-// Define supported chain types based on SDK
-type SupportedChain =
-  | 'sol'
-  | 'base'
-  | 'bsc'
-  | 'polygon'
-  | 'arbitrum'
-  | 'optimism'
-  | 'avalanche'
-  | 'ethereum'
-  | 'zksync'
-  | 'sui';
-
-// Define supported duration types
-type Duration = '1m' | '5m' | '1h' | '4h' | '24h';
-
-// Define supported sort fields for ranking
-type RankingSortByField =
-  | 'marketData.priceInUsd'
-  | 'stats.priceChangeRatioInUsd1m'
-  | 'stats.priceChangeRatioInUsd5m'
-  | 'stats.priceChangeRatioInUsd1h'
-  | 'stats.priceChangeRatioInUsd4h'
-  | 'stats.priceChangeRatioInUsd24h'
-  | 'marketData.marketCapInUsd'
-  | 'marketData.tvlInUsd'
-  | 'marketData.top10HoldingsRatio'
-  | 'marketData.top100HoldingsRatio'
-  | 'marketData.holders'
-  | 'stats.trades1m'
-  | 'stats.trades5m'
-  | 'stats.trades1h'
-  | 'stats.trades4h'
-  | 'stats.trades24h'
-  | 'stats.traders1m'
-  | 'stats.traders5m'
-  | 'stats.traders1h'
-  | 'stats.traders4h'
-  | 'stats.traders24h'
-  | 'stats.volumesInUsd1m'
-  | 'stats.volumesInUsd5m'
-  | 'stats.volumesInUsd1h'
-  | 'stats.volumesInUsd4h'
-  | 'stats.volumesInUsd24h'
-  | 'tokenCreatedAt';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TradeTool {
@@ -87,8 +41,9 @@ export class TradeTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.trade.getTrades(params);
+      const { chain, ...restParams } = params;
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.trade.getTrades(chain, restParams);
 
       return {
         content: [
@@ -105,7 +60,6 @@ export class TradeTool {
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,
                   endCursor: result?.endCursor,
-                  total: result?.total,
                 },
                 timestamp: new Date().toISOString(),
               },
@@ -164,9 +118,8 @@ export class TradeTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.trade.getTopTraders({
-        chain: params.chain,
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.trade.getTopTraders(params.chain, {
         tokenAddress: params.tokenAddress,
         timeFrame: params.timeFrame,
         sortType: params.sortType,
@@ -191,7 +144,6 @@ export class TradeTool {
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,
                   endCursor: result?.endCursor,
-                  total: result?.total,
                 },
                 timestamp: new Date().toISOString(),
               },
@@ -228,8 +180,7 @@ export class TradeTool {
     description: 'Get top gainers and losers on a specific chain',
     parameters: z.object({
       chain: z.string(),
-      type: z.string().optional(),
-      sortBy: z.string().optional(),
+      resolution: z.enum(['1d', '7d', '30d']).optional(),
       sortType: z.string().optional(),
       cursor: z.string().optional(),
       limit: z.string().optional(),
@@ -249,11 +200,9 @@ export class TradeTool {
       const accessToken = authHeader ? authHeader.split(' ')[1] : undefined;
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.trade.getGainersLosers({
-        chain: params.chain,
-        type: params.type || '1W',
-        sortBy: params.sortBy || 'PnL',
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.trade.getTraderGainersLosers(params.chain, {
+        resolution: params.resolution,
         sortType: params.sortType || 'desc',
         cursor: params.cursor || '',
         limit: params.limit ? Number(params.limit) : 10,
@@ -275,7 +224,6 @@ export class TradeTool {
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,
                   endCursor: result?.endCursor,
-                  total: result?.total,
                 },
                 timestamp: new Date().toISOString(),
               },
@@ -350,9 +298,8 @@ export class TradeTool {
       const accessToken = authHeader?.split(' ')[1];
       if (!accessToken) throw new Error('Access token is required.');
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.trade.getActivities({
-        chain: params.chain,
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.trade.getActivities(params.chain, {
         cursor: params.cursor || '',
         limit: params.limit
           ? Math.min(Math.max(Number(params.limit), 1), 100)
@@ -388,7 +335,6 @@ export class TradeTool {
                 result,
                 count: result?.data?.length ?? 0,
                 pagination: {
-                  total: result?.total,
                   hasNext: result?.hasNext,
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,

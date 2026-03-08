@@ -1,29 +1,6 @@
-import { DexClient } from '@chainstream-io/sdk';
-import {
-  ChainSymbol,
-  GetActivitiesDirectionEnum,
-  GetActivitiesTypeEnum,
-  GetGainersLosersTypeEnum,
-  GetTopTradersSortByEnum,
-  GetTopTradersSortTypeEnum,
-  GetTopTradersTimeFrameEnum,
-  GetTradesTypeEnum,
-} from '@chainstream-io/sdk/openapi';
+import { ChainStreamClient, TradeType, ActivityType, TimeFrame, TopTraderSortBy, SortDirection, TraderPnlResolution } from '@chainstream-io/sdk';
 import { Injectable, Scope } from '@nestjs/common';
 import { Resource, ResourceTemplate } from '../../../dist';
-
-// Define supported chain types based on SDK
-type SupportedChain =
-  | 'sol'
-  | 'base'
-  | 'bsc'
-  | 'polygon'
-  | 'arbitrum'
-  | 'optimism'
-  | 'avalanche'
-  | 'ethereum'
-  | 'zksync'
-  | 'sui';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TradeResource {
@@ -33,7 +10,7 @@ export class TradeResource {
       
       🔐 Authentication Required
       
-      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v1/trade-chain-get`,
+      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v2/trade-chain-get`,
     mimeType: 'application/json',
     uriTemplate:
       'mcp://dex/trade/list/{chain}?tokenAddress={tokenAddress}&walletAddress={walletAddress}&poolAddress={poolAddress}&type={type}&beforeTimestamp={beforeTimestamp}&afterTimestamp={afterTimestamp}&beforeBlockHeight={beforeBlockHeight}&afterBlockHeight={afterBlockHeight}&cursor={cursor}&limit={limit}&direction={direction}',
@@ -70,33 +47,22 @@ export class TradeResource {
         direction: url.searchParams.get('direction') || undefined,
       };
 
-      const dexClient = new DexClient(accessToken);
-
-      // Ensure direction param is only 'next' | 'prev' | undefined
       let directionParam = queryParams.direction;
       if (directionParam !== 'next' && directionParam !== 'prev') {
         directionParam = undefined;
       }
 
-      // Fix: Convert queryParams.type to correct enum if present
-      let typeParam: GetTradesTypeEnum | undefined = undefined;
-      if (queryParams.type) {
-        if (
-          Object.values(GetTradesTypeEnum).includes(
-            queryParams.type as GetTradesTypeEnum,
-          )
-        ) {
-          typeParam = queryParams.type as GetTradesTypeEnum;
-        } else {
-          typeParam = undefined;
-        }
-      }
+      const allowedTypes = ['BUY', 'SELL'];
+      const typeParam = allowedTypes.includes(queryParams.type as string)
+        ? queryParams.type
+        : undefined;
 
-      const result = await dexClient.trade.getTrades({
+      const client = new ChainStreamClient(accessToken);
+
+      const result = await client.trade.getTrades(chain, {
         ...queryParams,
-        type: typeParam,
+        type: typeParam as TradeType | undefined,
         direction: directionParam,
-        chain: chain as SupportedChain,
       });
 
       return {
@@ -115,7 +81,6 @@ export class TradeResource {
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,
                   endCursor: result?.endCursor,
-                  total: result?.total,
                 },
                 timestamp: new Date().toISOString(),
               },
@@ -153,7 +118,7 @@ export class TradeResource {
       
       🔐 Authentication Required
       
-      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v1/trade-chain-top-traders-get`,
+      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v2/trade-chain-top-traders-get`,
     mimeType: 'application/json',
     uriTemplate:
       'mcp://dex/trade/topTraders/{chain}?tokenAddress={tokenAddress}&timeFrame={timeFrame}&sortType={sortType}&sortBy={sortBy}&cursor={cursor}&limit={limit}&direction={direction}',
@@ -171,7 +136,6 @@ export class TradeResource {
         throw new Error('tokenAddress is required.');
       }
 
-      // ✅ 设置默认值，确保类型安全
       const timeFrame = url.searchParams.get('timeFrame') || '30m';
       const sortType = url.searchParams.get('sortType') || 'desc';
       const sortBy = url.searchParams.get('sortBy') || 'volume';
@@ -181,18 +145,18 @@ export class TradeResource {
         ? Math.min(Math.max(Number(url.searchParams.get('limit')), 1), 10)
         : 10;
 
-      const dexClient = new DexClient(accessToken);
+      const client = new ChainStreamClient(accessToken);
 
-      const result = await dexClient.trade.getTopTraders({
-        chain: chain as SupportedChain,
+      const result = await client.trade.getTopTraders(chain, {
         tokenAddress,
-        timeFrame: timeFrame as GetTopTradersTimeFrameEnum,
-        sortType: sortType as GetTopTradersSortTypeEnum,
-        sortBy: sortBy as GetTopTradersSortByEnum,
+        timeFrame: timeFrame as TimeFrame,
+        sortType: sortType as SortDirection,
+        sortBy: sortBy as TopTraderSortBy,
         cursor,
         direction: direction as 'next' | 'prev' | undefined,
         limit,
       });
+
       return {
         contents: [
           {
@@ -215,7 +179,6 @@ export class TradeResource {
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,
                   endCursor: result?.endCursor,
-                  total: result?.total,
                 },
                 timestamp: new Date().toISOString(),
               },
@@ -253,7 +216,7 @@ export class TradeResource {
       
       🔐 Authentication Required
       
-      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v1/trade-chain-gainers-losers-get`,
+      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v2/trade-chain-gainers-losers-get`,
     mimeType: 'application/json',
     uriTemplate:
       'mcp://dex/trade/gainers-losers/{chain}?type={type}&sortBy={sortBy}&sortType={sortType}&cursor={cursor}&limit={limit}&direction={direction}',
@@ -277,28 +240,20 @@ export class TradeResource {
         direction: url.searchParams.get('direction') || 'next',
       };
 
-      const dexClient = new DexClient(accessToken);
-
-      // Ensure 'direction' is typed correctly as "next" | "prev" | undefined
       const { direction, ...restQueryParams } = queryParams;
-      // Ensure direction type and type compatibility for API
       const typedDirection =
         direction === 'next' || direction === 'prev' ? direction : undefined;
 
-      // Map the 'type' param to the correct enum or undefined if invalid
-      // Assuming GetGainersLosersTypeEnum = { "1W": "1W", "1D": "1D", ... }
-      // You may need to define the enum or import it if not in scope
       const allowedTypes = ['1W', '1D', '1H', '1M'];
       const typedType = allowedTypes.includes(restQueryParams.type)
         ? restQueryParams.type
         : undefined;
 
-      // Only pass the fields the API expects.
-      const result = await dexClient.trade.getGainersLosers({
-        chain: chain as SupportedChain,
-        type: typedType as GetGainersLosersTypeEnum | undefined,
-        sortBy: 'PnL', // API accepts only "PnL"
-        sortType: restQueryParams.sortType as GetTopTradersSortTypeEnum,
+      const client = new ChainStreamClient(accessToken);
+
+      const result = await client.trade.getTraderGainersLosers(chain, {
+        resolution: restQueryParams.type as TraderPnlResolution | undefined,
+        sortType: restQueryParams.sortType as SortDirection,
         cursor: restQueryParams.cursor,
         limit: restQueryParams.limit,
         direction: typedDirection,
@@ -320,7 +275,6 @@ export class TradeResource {
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,
                   endCursor: result?.endCursor,
-                  total: result?.total,
                 },
                 timestamp: new Date().toISOString(),
               },
@@ -358,7 +312,7 @@ export class TradeResource {
       
       🔐 Authentication Required
       
-      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v1/trade-chain-activities-get`,
+      **API Docs**: https://docs.chainstream.io/en/api-reference/endpoint/trade/v2/trade-chain-activities-get`,
     mimeType: 'application/json',
     uriTemplate:
       'mcp://dex/trade/activity/list/{chain}?cursor={cursor}&limit={limit}&direction={direction}&tokenAddress={tokenAddress}&walletAddress={walletAddress}&poolAddress={poolAddress}&beforeTimestamp={beforeTimestamp}&afterTimestamp={afterTimestamp}&beforeBlockHeight={beforeBlockHeight}&afterBlockHeight={afterBlockHeight}&type={type}',
@@ -372,7 +326,6 @@ export class TradeResource {
 
       const url = new URL(uri);
       const queryParams = {
-        chain: chain as SupportedChain,
         cursor: url.searchParams.get('cursor') || '',
         limit: url.searchParams.get('limit')
           ? Math.min(Math.max(Number(url.searchParams.get('limit')), 1), 100)
@@ -401,7 +354,7 @@ export class TradeResource {
           ? queryParams.direction
           : undefined;
 
-      const typedType = [
+      const allowedActivityTypes = [
         'BUY',
         'SELL',
         'LIQUIDITY_INITIALIZE',
@@ -411,13 +364,15 @@ export class TradeResource {
         'RED_PACKET_CLAIM',
         'RED_PACKET_COMPLETE',
         'RED_PACKET_REFUND',
-      ].includes(queryParams.type as string)
-        ? (queryParams.type as GetActivitiesTypeEnum)
+      ];
+      const typedType = allowedActivityTypes.includes(
+        queryParams.type as string,
+      )
+        ? queryParams.type
         : undefined;
 
-      const dexClient = new DexClient(accessToken);
-      const result = await dexClient.trade.getActivities({
-        chain: chain as ChainSymbol,
+      const client = new ChainStreamClient(accessToken);
+      const result = await client.trade.getActivities(chain, {
         cursor: queryParams.cursor,
         limit: queryParams.limit,
         direction: typedDirection,
@@ -428,7 +383,7 @@ export class TradeResource {
         afterTimestamp: queryParams.afterTimestamp,
         beforeBlockHeight: queryParams.beforeBlockHeight,
         afterBlockHeight: queryParams.afterBlockHeight,
-        type: typedType,
+        type: typedType as ActivityType | undefined,
       });
 
       return {
@@ -443,7 +398,6 @@ export class TradeResource {
                 result,
                 count: result?.data?.length ?? 0,
                 pagination: {
-                  total: result?.total,
                   hasNext: result?.hasNext,
                   hasPrev: result?.hasPrev,
                   startCursor: result?.startCursor,

@@ -4,12 +4,21 @@ import { McpModule } from '../../dist';
 import { BlockchainPrompt } from '../resources/blockchain/blockchain.prompt';
 import { BlockchainResource } from '../resources/blockchain/blockchain.resource';
 import { BlockchainTool } from '../resources/blockchain/blockchain.tool';
+import { DefiPrompt } from '../resources/defi/defi.prompt';
+import { DefiResource } from '../resources/defi/defi.resource';
+import { DefiTool } from '../resources/defi/defi.tool';
 import { DexPrompt } from '../resources/dex/dex.prompt';
 import { DexResource } from '../resources/dex/dex.resource';
 import { DexTool } from '../resources/dex/dex.tool';
 import { DexpoolPrompt } from '../resources/dexpool/dexpool.prompt';
 import { DexpoolResource } from '../resources/dexpool/dexpool.resource';
 import { DexpoolTool } from '../resources/dexpool/dexpool.tool';
+import { IpfsPrompt } from '../resources/ipfs/ipfs.prompt';
+import { IpfsResource } from '../resources/ipfs/ipfs.resource';
+import { IpfsTool } from '../resources/ipfs/ipfs.tool';
+import { KytPrompt } from '../resources/kyt/kyt.prompt';
+import { KytResource } from '../resources/kyt/kyt.resource';
+import { KytTool } from '../resources/kyt/kyt.tool';
 import { RankingPrompt } from '../resources/ranking/ranking.prompt';
 import { RankingResource } from '../resources/ranking/ranking.resource';
 import { RankingTool } from '../resources/ranking/ranking.tool';
@@ -28,17 +37,19 @@ import { TransactionTool } from '../resources/transaction/transaction.tool';
 import { WalletPrompt } from '../resources/wallet/wallet.prompt';
 import { WalletResource } from '../resources/wallet/wallet.resource';
 import { WalletTool } from '../resources/wallet/wallet.tool';
+import { WatchlistPrompt } from '../resources/watchlist/watchlist.prompt';
+import { WatchlistResource } from '../resources/watchlist/watchlist.resource';
+import { WatchlistTool } from '../resources/watchlist/watchlist.tool';
+import { WebhookPrompt } from '../resources/webhook/webhook.prompt';
+import { WebhookResource } from '../resources/webhook/webhook.resource';
+import { WebhookTool } from '../resources/webhook/webhook.tool';
 
-// Note: The stateful server exposes SSE and Streamable HTTP endpoints.
 @Module({
   imports: [
     McpModule.forRoot({
       name: 'playground-mcp-server',
       version: '0.0.1',
       streamableHttp: {
-        // enableJsonResponse: false,
-        // sessionIdGenerator: () => randomUUID(),
-        // statelessMode: false,
         enableJsonResponse: true,
         sessionIdGenerator: undefined,
         statelessMode: true,
@@ -46,33 +57,48 @@ import { WalletTool } from '../resources/wallet/wallet.tool';
     }),
   ],
   providers: [
-    RankingResource,
-    RankingTool,
-    RankingPrompt,
-    TokenResource,
-    TokenTool,
-    TokenPrompt,
+    BlockchainResource,
+    BlockchainTool,
+    BlockchainPrompt,
     DexResource,
     DexTool,
     DexPrompt,
-    TransactionResource,
-    TransactionTool,
-    TransactionPrompt,
+    DexpoolResource,
+    DexpoolTool,
+    DexpoolPrompt,
+    TokenResource,
+    TokenTool,
+    TokenPrompt,
     WalletResource,
     WalletTool,
     WalletPrompt,
-    BlockchainPrompt,
-    BlockchainResource,
-    BlockchainTool,
-    DexpoolPrompt,
-    DexpoolResource,
-    DexpoolTool,
-    RedpacketPrompt,
-    RedpacketResource,
-    RedpacketTool,
-    TradePrompt,
     TradeResource,
     TradeTool,
+    TradePrompt,
+    TransactionResource,
+    TransactionTool,
+    TransactionPrompt,
+    RankingResource,
+    RankingTool,
+    RankingPrompt,
+    RedpacketResource,
+    RedpacketTool,
+    RedpacketPrompt,
+    KytResource,
+    KytTool,
+    KytPrompt,
+    WebhookResource,
+    WebhookTool,
+    WebhookPrompt,
+    IpfsResource,
+    IpfsTool,
+    IpfsPrompt,
+    WatchlistResource,
+    WatchlistTool,
+    WatchlistPrompt,
+    DefiResource,
+    DefiTool,
+    DefiPrompt,
   ],
 })
 export class AppModule {}
