@@ -3,3 +3,5 @@ export * from './constants';
 export * from './resource.decorator';
 export * from './resource-template.decorator';
 export * from './prompt.decorator';
+export * from './sampling.decorator';
+export * from './elicitation.decorator';
