@@ -178,7 +178,6 @@ export class TokenResource {
                 results: limitedResults,
                 returnedCount: limitedResults.length,
                 hasNext: searchResults.hasNext,
-                countsByProtocols: searchResults.countsByProtocols,
                 searchParams: { limit, sort, sortBy, protocols, cursor },
                 timestamp: new Date().toISOString(),
               },
